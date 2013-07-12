@@ -1,0 +1,23 @@
+<div id="${id}" class="${baseClass}Dialog" tabindex="-1">
+	<div data-dojo-type="dijit/Dialog" data-dojo-attach-point="dialogNode" data-dojo-props="title:'${title}'" style="display: none; width: ${width};">
+		<div class="dijitDialogPaneContentArea">
+			<fieldset class="${baseClass}SearchArea">
+				<legend>${searchAreaTitle}</legend>
+				<form data-dojo-type="dijit/form/Form" data-dojo-attach-point="searchFormNode">
+					<div style="float:right;text-align:center;'">
+						<button data-dojo-type="dijit/form/Button" data-dojo-attach-point="searchButtonNode" type="button">Search</button><br/>
+						<button data-dojo-type="dijit/form/Button" type="reset">Clear</button>
+					</div>
+					<label class="${baseClass}SearchLabel" for="${id}_nameFilter" >Name:</label>
+					<input id="${id}_nameFilter" type="text" name="name" data-dojo-type="dijit/form/TextBox" />
+				</form>
+			</fieldset>
+			<div class="${baseClass}ListCount" data-dojo-attach-point="listHeaderNode">List size:</div>
+			<div id="${id}_list" style="height: ${gridHeight}"></div>
+		</div>
+		<div class="dijitDialogPaneActionBar" style="text-align:right;">
+			<button data-dojo-type="dijit/form/Button" data-dojo-attach-point="okButtonNode" type="button" disabled="disabled">OK</button>
+			<button data-dojo-type="dijit/form/Button" data-dojo-attach-point="cancelButtonNode" type="button">Cancel</button>
+		</div>
+	</div>
+</div>

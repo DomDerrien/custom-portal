@@ -1,0 +1,38 @@
+#notificationArea {
+	display: none;
+	opacity: 0;
+	position: absolute;
+	top: 0px;
+	left: 200px;
+	right: 200px;
+	padding: 20px;
+	background-color: #fff;
+	border-bottom:2px solid lightblue;
+	border-left:1px solid lightblue;
+	border-right:1px solid lightblue;
+	-webkit-box-shadow: -3px 3px 10px #aaa;
+	-moz-box-shadow: -3px 3px 10px #aaa;
+	box-shadow: -3px 3px 10px #aaa;
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=10, Direction=135, Color='#a0a0a0');
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=10, Direction=135, Color='#a0a0a0')";
+	z-index: 999;
+}
+#notificationMessage {
+	font-size: 14pt;
+}
+#notificationLevelIcon {
+	padding-right: 20px;
+}
+#notificationAreaClose {
+	float: right;
+	font-weight: bold;
+	cursor: pointer;
+}
+.lookupIcon {
+	background-image: url("http://ajax.googleapis.com/ajax/libs/dojo/1.8.1/dojox/editor/plugins/resources/icons/editorIconsFindReplaceEnabled.png"); 
+	background-repeat: no-repeat;
+	width: 18px;
+	height: 18px;
+	background-position: 0;
+	text-align: center;
+}
