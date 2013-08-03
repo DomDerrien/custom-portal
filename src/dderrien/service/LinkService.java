@@ -5,10 +5,10 @@ import javax.inject.Inject;
 import dderrien.dao.LinkDao;
 import dderrien.model.Link;
 
-public class LinkService extends AbstractService<Link> {
+public class LinkService extends AbstractAuthService<Link> {
 
     @Inject
-    public LinkService(LinkDao dao) {
-        super(dao);
+    public LinkService(LinkDao dao, UserService userService) {
+        super(dao, userService);
     }
 }
