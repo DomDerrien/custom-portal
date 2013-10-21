@@ -47,6 +47,12 @@
         </auth-constraint>
     </security-constraint>
 
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/api/ipAddress</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
 	<!-- Session cleanup -->
 	<servlet>
 		<servlet-name>_ah_sessioncleanup</servlet-name>
