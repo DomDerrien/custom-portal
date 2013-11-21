@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-1.0-sdk-1.8.1.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-labs-1.8.1.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-jsr107cache-1.8.1.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/javax.inject-1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/jaxrs-api-3.0.1.Final.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/jsr107cache-1.1.jar"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-4.0rc1.jar" sourcepath="war/WEB-INF/lib/objectify-4.0rc1-sources.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-beanutils-1.8.3.jar" sourcepath="war/WEB-INF/lib/commons-beanutils-1.8.3-sources.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/httpcore-4.2.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-lang3-3.1.jar" sourcepath="war/WEB-INF/lib/commons-lang3-3.1-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/dderrien/Development/tools/appengine-java-sdk-1.8.6/lib/shared/servlet-api.jar"/>
-	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

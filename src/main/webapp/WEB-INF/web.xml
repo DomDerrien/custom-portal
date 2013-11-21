@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app
+        version="2.5"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <display-name>Customized Portal</display-name>
+
+    <context-param>
+        <param-name>resteasy.guice.modules</param-name>
+        <param-value>
+        	dderrien.ModuleDefs,
+        	dderrien.customportal.ModuleDefs,
+        	dderrien.ipaddresscontrol.ModuleDefs
+        </param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener</listener-class>
+    </listener>
+ 
+	<servlet>
+		<servlet-name>resteasy-servlet</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+	</servlet>
+ 
+	<servlet-mapping>
+		<servlet-name>resteasy-servlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>resteasy-servlet</servlet-name>
+		<url-pattern>/console</url-pattern>
+	</servlet-mapping>
+
+	<!-- Security -->
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/api/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/api/user/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/api/ipAddress</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
+	<!-- Session cleanup -->
+	<servlet>
+		<servlet-name>_ah_sessioncleanup</servlet-name>
+		<servlet-class>com.google.apphosting.utils.servlet.SessionCleanupServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>_ah_sessioncleanup</servlet-name>
+		<url-pattern>/_ah/sessioncleanup</url-pattern>
+	</servlet-mapping>
+
+</web-app>
