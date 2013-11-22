@@ -73,6 +73,13 @@
         	<version>3.0.5.Final</version>
         </dependency>
 
+        <dependency>
+        	<groupId>org.dojotoolkit</groupId>
+        	<artifactId>dojo-war</artifactId>
+        	<version>1.9.1</version>
+        	<type>war</type>
+        </dependency>
+
         <!-- Test Dependencies -->
 	    <dependency>
 	        <groupId>junit</groupId>
@@ -107,8 +114,8 @@
                 <version>2.5.1</version>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 
@@ -126,6 +133,18 @@
                             <targetPath>WEB-INF</targetPath>
                         </resource>
                     </webResources>
+                	<overlays>
+                		<overlay>
+				        	<groupId>org.dojotoolkit</groupId>
+				        	<artifactId>dojo-war</artifactId>
+				        	<targetPath>js/3rdParty</targetPath>
+				        	<excludes>
+				        		<exclude>dojox/**</exclude>
+				        		<exclude>**/Test*</exclude>
+				        		<exclude>**/*uncompressed*</exclude>
+				        	</excludes>
+                		</overlay>
+                	</overlays>
                 </configuration>
             </plugin>
 

@@ -62,13 +62,15 @@
 			locale: 'en',
 			parseOnLoad: false,
 			packages: [
+				{ name: 'dojo', location: '/js/3rdParty/dojo' },
+				{ name: 'dijit', location: '/js/3rdParty/dijit' },
 				{ name: 'dderrien', location: '/js/dderrien' },
 				{ name: 'dbootstrap', location: '/js/3rdParty/dbootstrap' },
 				{ name: 'xstyle', location: '/js/3rdParty/xstyle' }
 			],
 			useXDomain: false
 		"
-		src="//ajax.googleapis.com/ajax/libs/dojo/1.8/dojo/dojo.js"
+		src="/js/3rdParty/dojo/dojo.js"
 		type="text/javascript"
 	></script>
 	<script>
