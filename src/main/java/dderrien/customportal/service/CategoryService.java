@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import dderrien.customportal.dao.CategoryDao;
 import dderrien.customportal.model.Category;
+import dderrien.exception.ServerErrorException;
 import dderrien.service.AbstractAuthService;
 import dderrien.service.UserService;
 import dderrien.util.Range;
@@ -45,26 +46,31 @@ public class CategoryService extends AbstractAuthService<Category> {
                 boolean moveNearerFirst = existingOrder == null && entityOrder != null || 0 < existingOrder.compareTo(entityOrder);
                 
                 // Pass all categories in review and move them if they've been affected by the move
-                for (Category category: super.select(null, null, null)) {
-                    if (!category.getId().equals(id) && category.getOrder() != null) {
-                        Long categoryOrder = category.getOrder();
-                        if (moveNearerFirst) {
-                            // Move back the categories that were placed between the new place and the old place
-                            if (entityOrder <= categoryOrder && categoryOrder < existingOrder) {
-                                Category clone = (Category) category.clone();
-                                clone.setOrder(categoryOrder + 1);
-                                super.update(category, clone);
-                            }
-                        }
-                        else {
-                            // Move forward the categories that were placed between the old place and the new place
-                            if (existingOrder < categoryOrder && categoryOrder <= entityOrder) {
-                                Category clone = (Category) category.clone();
-                                clone.setOrder(categoryOrder - 1);
-                                super.update(category, clone);
-                            }
-                        }
-                    }
+                try {
+	                for (Category category: super.select(null, null, null)) {
+	                    if (!category.getId().equals(id) && category.getOrder() != null) {
+	                        Long categoryOrder = category.getOrder();
+	                        if (moveNearerFirst) {
+	                            // Move back the categories that were placed between the new place and the old place
+	                            if (entityOrder <= categoryOrder && categoryOrder < existingOrder) {
+	                                Category clone = (Category) category.clone();
+	                                clone.setOrder(categoryOrder + 1);
+	                                super.update(category, clone);
+	                            }
+	                        }
+	                        else {
+	                            // Move forward the categories that were placed between the old place and the new place
+	                            if (existingOrder < categoryOrder && categoryOrder <= entityOrder) {
+	                                Category clone = (Category) category.clone();
+	                                clone.setOrder(categoryOrder - 1);
+	                                super.update(category, clone);
+	                            }
+	                        }
+	                    }
+	                }
+                }
+                catch(CloneNotSupportedException ex) {
+                	throw new ServerErrorException("Cannot update the category order because one of them is not cloneable!", ex);
                 }
             }
             

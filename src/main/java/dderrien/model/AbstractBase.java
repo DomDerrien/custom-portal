@@ -69,37 +69,37 @@ public abstract class AbstractBase<T> implements Cloneable {
 
                 out.append("\"").append(propertyName).append("\": ");
                 if (propertyValue instanceof Date) {
-                    out.append(((Date) propertyValue).getTime()).append(", ");
+                    out.append(((Date) propertyValue).getTime());
                 }
                 else if (propertyValue instanceof Boolean) {
-                    out.append(Boolean.TRUE.equals((Boolean) propertyValue) ? "true" : "false").append(", ");
+                    out.append(Boolean.TRUE.equals((Boolean) propertyValue) ? "true" : "false");
                 }
                 else if (propertyValue instanceof Long) {
-                    out.append((Long) propertyValue).append(", ");
+                    out.append((Long) propertyValue);
                 }
                 else if (propertyValue instanceof Double) {
-                    out.append((Double) propertyValue).append(", ");
+                    out.append((Double) propertyValue);
                 }
                 else  {
-                    out.append("\"").append(propertyValue).append("\", ");
+                    out.append("\"").append(propertyValue).append("\"");
                 }
+                out.append(", ");
             }
         }
         catch (Exception ex) {
-            out.append("\"ex\": \"").append(ex.getClass().getSimpleName()).append(" -- ").append(ex.getMessage()).append("\", ");
+            out.append("\"ex\": \"").append(ex.getClass().getSimpleName()).append(" in ").append(getClass().getSimpleName()).append(".toString()").append("\", ");
         }
-        return out.replace(out.lastIndexOf(", "), out.lastIndexOf(", ") + ", ".length(), "").append(" }").toString();
+        int lastSeparator = out.lastIndexOf(", ");
+        if (lastSeparator != -1) {
+        	out.replace(lastSeparator, lastSeparator + ", ".length(), "");
+        }
+        return out.append(" }").toString();
     }
     
     @Override
     @SuppressWarnings({ "unchecked" })
-    public AbstractBase<T> clone() {
-        try {
-            return (AbstractBase<T>) super.clone();
-        }
-        catch (CloneNotSupportedException ex) {
-            throw new ServerErrorException("Cannot clone entity: " + getClass().getName(), ex);
-        }
+    public T clone() throws CloneNotSupportedException{
+        return (T) super.clone();
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -120,42 +120,28 @@ public abstract class AbstractBase<T> implements Cloneable {
                 WriteOnceField writeOnceFieldAnnotation = propertyDescriptor.getReadMethod().getAnnotation(WriteOnceField.class);
 
                 if (writeOnceFieldAnnotation == null && otherValue != null && !isSameValue(otherValue, thisValue)) {
-                    try {
-                        propertyDescriptor.getWriteMethod().invoke(this, otherValue);
-                        beanUtilsInstance.setProperty(this, propertyName, otherValue);
-                        merged = true;
-                    }
-                    catch (IllegalAccessException e) {
-                        logger.warning("attempt to copy a non writable property when merging : '" + propertyName + "'");
-                    }
+                    propertyDescriptor.getWriteMethod().invoke(this, otherValue);
+                    merged = true;
                 }
             }
 
             return merged;
 
         }
-        catch (NoSuchMethodException e1) {
-            throw new ServerErrorException("intropsection error when attempting to merge " + this.getClass().getSimpleName() + " entities");
-        }
-        catch (IllegalAccessException e1) {
-            throw new ServerErrorException("intropsection error when attempting to merge " + this.getClass().getSimpleName() + " entities");
-        }
-        catch (InvocationTargetException e1) {
-            throw new ServerErrorException("intropsection error when attempting to merge " + this.getClass().getSimpleName() + " entities");
+        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+            throw new ServerErrorException("Intropsection error when attempting to merge " + this.getClass().getSimpleName() + " entities", ex);
         }
     }
 
-    protected boolean isSameValue(Object otherValue, Object thisValue) {
+    protected static boolean isSameValue(Object otherValue, Object thisValue) {
         if (otherValue != null) {
-            if (otherValue instanceof BigDecimal)
-                // Comparison because BigDecimal(5.0) != BigDecimal(5)
-                return thisValue != null && ((BigDecimal) otherValue).compareTo((BigDecimal) thisValue) == 0;
-
+            if (otherValue instanceof BigDecimal) { // Comparison because BigDecimal(5.0) != BigDecimal(5)
+                return ((BigDecimal) otherValue).compareTo((BigDecimal) thisValue) == 0;
+            }
             // Normal case
             return otherValue.equals(thisValue);
         }
-        else
-            return thisValue == null;
+        return thisValue == null;
     }
 
     @OnSave

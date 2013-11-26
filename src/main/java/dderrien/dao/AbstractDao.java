@@ -2,7 +2,6 @@ package dderrien.dao;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.LoadType;
 import com.googlecode.objectify.cmd.Query;
-import com.googlecode.objectify.cmd.QueryKeys;
 
 import dderrien.exception.ClientErrorException;
 import dderrien.exception.InvalidRangeException;
@@ -73,14 +70,10 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
             boolean valueProcessed = false;
             Object value = params.get(key);
 
-            key = key.trim();
-            if (noOperatorPattern.matcher(key).matches()) {
-                key = key + " ="; // required for Objectify 4 otherwise defaults to == which yields strange results
-            }
-
             if (value == null) {
                 continue;
             }
+            
             if (value instanceof String) {
                 String stringValue = (String) value;
                 if (stringValue.length() == 0) {
@@ -108,8 +101,14 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
                 }
                 valueProcessed = true;
             }
-            if (!valueProcessed)
+            
+            if (!valueProcessed) {
+                if (noOperatorPattern.matcher(key).matches()) {
+                    key = key + " = "; // required for Objectify 4 otherwise defaults to == which yields strange results
+                }
+
                 query = query.filter(key, value);
+            }
         }
 
         if (range != null && range.isInitialized()) {
@@ -138,60 +137,37 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
     }
 
     public Key<AbstractBase<T>> save(AbstractBase<T> candidate) {
-        if (candidate.getId() == null) {
-            candidate.setId(generateEntityId(candidate.getClass()));
-            candidate.setCreation(new Date());
-        }
-        return saveInner(candidate);
+        return getOfy().save().entity(candidate).now();
     }
 
     public void delete(Long key) {
         if (key == null) {
             throw new ClientErrorException("Cannot delete an entity of class " + getModelClass().getName() + " because the given key is null!");
         }
-        getOfy().delete().entities(get(key)).now();
+        getOfy().delete().type(getModelClass()).id(key).now();
     }
 
-    /**
-     * Id is set manually by reversing a non modulo 10 id provided by the datastore so that writing will very likely impact a different shard during write process
-     */
-    protected long generateEntityId(Class<?> modelClass) {
-
-        long id;
-        do {
-            id = ObjectifyService.factory().allocateId(getModelClass()).getId();
-        } while (id % 10 == 0);
-
-        Long reversedId = Long.valueOf(StringUtils.reverse(String.valueOf(id)));
-
-        return reversedId;
-    }
-
-    public LoadType<T> getQuery(Class<T> modelClass) {
-
+    ///=========================
+    
+    protected LoadType<T> getQuery(Class<T> modelClass) {
         return getOfy().load().type(modelClass);
     }
 
-    @SuppressWarnings("unchecked")
-    public Key<AbstractBase<T>> saveInner(AbstractBase<T> candidate) {
-        return getOfy().save().entities(candidate).now().keySet().iterator().next();
-    }
-
     protected Query<T> applyRange(Query<T> query, Range range) {
-        QueryKeys<T> countQuery = query.keys();
-
-        // scrolling processing
-        query = query.offset(range.getStartRow());
-
-        if (range.getCount() != null) {
-            query = query.limit(range.getCount());
-        }
-
-        int count = countQuery.list().size();
-        range.setTotal(count);
-        // if total is inconsistent with endrow, no need to continue
-        if (range.getStartRow() > 0 && range.getStartRow() > range.getTotal() - 1)
+    	// Get the total number of matching entity keys
+        int total = query.keys().list().size();
+        int startRow = range.getStartRow();
+    	if (startRow > 0 && startRow > total - 1) {
             throw new InvalidRangeException("range header mal formed for scrolling : result set shorter than expected");
+        }
+        range.setTotal(total);
+
+        // Specify request boundaries
+        query = query.offset(startRow);
+        Integer count = range.getCount();
+		if (count != null) {
+            query = query.limit(count);
+        }
 
         return query;
     }
