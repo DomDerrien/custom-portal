@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 
 import com.googlecode.objectify.Key;
 
-import dderrien.model.AbstractBase;
+import dderrien.common.model.AbstractBase;
 import dderrien.customportal.model.Category;
 import dderrien.customportal.service.CategoryService;
 

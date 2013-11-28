@@ -2,9 +2,9 @@ package dderrien.customportal.dao;
 
 import com.googlecode.objectify.ObjectifyService;
 
+import dderrien.common.dao.AbstractDao;
+import dderrien.common.util.IntrospectionHelper;
 import dderrien.customportal.model.Category;
-import dderrien.dao.AbstractDao;
-import dderrien.util.IntrospectionHelper;
 
 public class CategoryDao extends AbstractDao<Category> {
 

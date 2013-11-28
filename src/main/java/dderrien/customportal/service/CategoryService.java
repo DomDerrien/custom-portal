@@ -6,12 +6,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import dderrien.common.exception.ServerErrorException;
+import dderrien.common.service.AbstractAuthService;
+import dderrien.common.service.UserService;
+import dderrien.common.util.Range;
 import dderrien.customportal.dao.CategoryDao;
 import dderrien.customportal.model.Category;
-import dderrien.exception.ServerErrorException;
-import dderrien.service.AbstractAuthService;
-import dderrien.service.UserService;
-import dderrien.util.Range;
 
 public class CategoryService extends AbstractAuthService<Category> {
     

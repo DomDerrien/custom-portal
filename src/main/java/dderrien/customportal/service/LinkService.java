@@ -2,10 +2,10 @@ package dderrien.customportal.service;
 
 import javax.inject.Inject;
 
+import dderrien.common.service.AbstractAuthService;
+import dderrien.common.service.UserService;
 import dderrien.customportal.dao.LinkDao;
 import dderrien.customportal.model.Link;
-import dderrien.service.AbstractAuthService;
-import dderrien.service.UserService;
 
 public class LinkService extends AbstractAuthService<Link> {
 

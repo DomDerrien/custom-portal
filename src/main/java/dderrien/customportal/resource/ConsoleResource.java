@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response;
 
 import com.google.appengine.api.users.UserServiceFactory;
 
-import dderrien.exception.NotFoundException;
-import dderrien.model.User;
-import dderrien.service.UserService;
+import dderrien.common.exception.NotFoundException;
+import dderrien.common.model.User;
+import dderrien.common.service.UserService;
 
 @Path("/console")
 public class ConsoleResource {

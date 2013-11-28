@@ -1,4 +1,4 @@
-package dderrien.customportal.resource;
+package dderrien.common.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,31 +19,30 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.googlecode.objectify.Key;
 
 import dderrien.common.model.AbstractBase;
-import dderrien.customportal.model.Link;
-import dderrien.customportal.service.LinkService;
+import dderrien.common.model.User;
+import dderrien.common.service.UserService;
 
-@Path("/api/link")
-public class LinkResource {
+@Path("/api/user")
+public class UserResource {
 
-    private LinkService service;
-    
+    private UserService service;
+
     @Inject
-    public LinkResource(LinkService service) {
+    public UserResource(UserService service) {
         this.service = service;
     }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Link> select(@QueryParam("ownerId") Long ownerId, @QueryParam("categoryId") Long categoryId) {
+    public List<User> select(@QueryParam("name") String name) {
         Map<String, Object> params = new HashMap<String, Object>();
-        if (ownerId != null && ownerId != 0L) {
-            params.put("ownerId", ownerId);
-        }
-        if (categoryId != null && categoryId != 0L) {
-            params.put("categoryId", categoryId);
+        if (!StringUtils.isEmpty(name)) {
+            params.put("name", name);
         }
         return service.select(params, null, null);
     }
@@ -51,23 +50,23 @@ public class LinkResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Link get(@PathParam("id") Long id) {
+    public User get(@PathParam("id") Long id) {
         return service.get(id);
     }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Link entity) throws URISyntaxException {
-        Key<AbstractBase<Link>> key = service.create(entity);
-        return Response.status(201).entity(get(key.getId())).location(new URI("/api/link/" + key.getId())).build();
+    public Response create(User entity) throws URISyntaxException {
+        Key<AbstractBase<User>> key = service.create(entity);
+        return Response.status(201).entity(get(key.getId())).location(new URI("/api/user/" + key.getId())).build();
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Link update(@PathParam("id") Long id, Link entity) {
+    public User update(@PathParam("id") Long id, User entity) {
         return service.update(id, entity);
     }
 

@@ -15,9 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import dderrien.common.util.MailConnector;
 import dderrien.ipaddresscontrol.model.IPAddress;
 import dderrien.ipaddresscontrol.service.IPAddressService;
-import dderrien.util.MailConnector;
 
 @Path("/api/ipAddress")
 public class IPAddressResource {

@@ -7,7 +7,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Unindex;
 
-import dderrien.model.AbstractBase;
+import dderrien.common.model.AbstractBase;
 
 @Entity
 @Cache
