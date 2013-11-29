@@ -50,7 +50,7 @@ public class AbstractBaseTest {
 	public void testAccessors() {
 		TestModel entity = new TestModel();
 		
-		Long id = Long.valueOf(12345L);
+		Long id = 12345L;
 		Date creation = new Date(123L);
 		
 		entity.setId(id);
@@ -104,7 +104,7 @@ public class AbstractBaseTest {
 	
 	@Test
 	public void testMergeNone() {
-		Long id = Long.valueOf(12345L);
+		Long id = 12345L;
 		Date creation = new Date(123L);
 
 		TestModel entity = new TestModel();
@@ -122,7 +122,7 @@ public class AbstractBaseTest {
 	
 	@Test
 	public void testMergeRevealed() {
-		Long id = Long.valueOf(12345L);
+		Long id = 12345L;
 		Date creation = new Date(123L);
 		String str = "String";
 

@@ -49,7 +49,7 @@ public class ConsoleResource {
             user = userService.getLoggedUser();
         }
         catch(NotFoundException ex) {
-            com.google.appengine.api.users.User systemUser = UserServiceFactory.getUserService().getCurrentUser();
+            com.google.appengine.api.users.User systemUser = userService.getSystemUserService().getCurrentUser();
             user = new User();
             user.setName(systemUser.getNickname());
             user.setEmail(systemUser.getEmail());
@@ -67,10 +67,10 @@ public class ConsoleResource {
     }
     
     protected String getLoginURL(String thisURL) {
-        return UserServiceFactory.getUserService().createLoginURL(thisURL);
+        return userService.getSystemUserService().createLoginURL(thisURL);
     }
     
     protected String getLogoutURL(String thisURL) {
-        return UserServiceFactory.getUserService().createLogoutURL(thisURL);
+        return userService.getSystemUserService().createLogoutURL(thisURL);
     }
 }

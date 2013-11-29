@@ -1,4 +1,4 @@
-package dderrien.common;
+package dderrien.ipaddresscontrol;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import com.google.inject.Binder;
 
-import dderrien.common.dao.UserDao;
-import dderrien.common.resource.UserResource;
-import dderrien.common.service.UserService;
+import dderrien.ipaddresscontrol.dao.IPAddressDao;
+import dderrien.ipaddresscontrol.resource.IPAddressResource;
+import dderrien.ipaddresscontrol.service.IPAddressService;
 
 public class ModuleDefsTest {
 
@@ -21,11 +21,10 @@ public class ModuleDefsTest {
 		Binder binder = mock(Binder.class);
 		new ModuleDefs().configure(binder);
 		
-		verify(binder, times(1)).bind(UserDao.class);
-		verify(binder, times(1)).bind(UserService.class);
-		verify(binder, times(1)).bind(UserResource.class);
+		verify(binder, times(1)).bind(IPAddressDao.class);
+		verify(binder, times(1)).bind(IPAddressService.class);
+		verify(binder, times(1)).bind(IPAddressResource.class);
 
 		verify(binder, times(3)).bind(any(Class.class));
 	}
-
 }

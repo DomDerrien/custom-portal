@@ -43,11 +43,11 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
         return ofy();
     }
 
-    public T get(Long key) {
-        if (key == null) {
-            throw new ClientErrorException("Cannot look for an entity of class " + getModelClass().getName() + " because the given key is null!");
+    public T get(Long id) {
+        if (id == null) {
+            throw new ClientErrorException("Cannot look for an entity of class " + getModelClass().getName() + " because the given identifier is null!");
         }
-        return getQuery(getModelClass()).id(key).now();
+        return getQuery(getModelClass()).id(id).now();
     }
 
     public T filter(String condition, Object value) {
@@ -140,11 +140,11 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
         return getOfy().save().entity(candidate).now();
     }
 
-    public void delete(Long key) {
-        if (key == null) {
-            throw new ClientErrorException("Cannot delete an entity of class " + getModelClass().getName() + " because the given key is null!");
+    public void delete(Long id) {
+        if (id == null) {
+            throw new ClientErrorException("Cannot delete an entity of class " + getModelClass().getName() + " because the given identifier is null!");
         }
-        getOfy().delete().type(getModelClass()).id(key).now();
+        getOfy().delete().type(getModelClass()).id(id).now();
     }
 
     ///=========================

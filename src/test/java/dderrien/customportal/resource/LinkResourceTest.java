@@ -1,7 +1,6 @@
-package dderrien.common.resource;
+package dderrien.customportal.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
@@ -38,55 +37,80 @@ import org.mockito.stubbing.Answer;
 import com.googlecode.objectify.Key;
 
 import dderrien.common.model.AbstractBase;
-import dderrien.common.model.User;
-import dderrien.common.service.UserService;
+import dderrien.customportal.model.Link;
+import dderrien.customportal.resource.LinkResource;
+import dderrien.customportal.service.LinkService;
 import dderrien.common.util.Range;
 
-public class UserResourceTest {
+public class LinkResourceTest {
 
 	@Test
 	public void testConstructor() {
-		new UserResource(mock(UserService.class));
+		new LinkResource(mock(LinkService.class));
 	}
 	
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testSelectAll() {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
-		final ArrayList<User> selection = new ArrayList<User>();
-		doAnswer(new Answer<List<User>>() {
+		final ArrayList<Link> selection = new ArrayList<Link>();
+		doAnswer(new Answer<List<Link>>() {
 			@Override
-			public List<User> answer(InvocationOnMock invocation) throws Throwable {
+			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
 				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
 				assertEquals(0, filters.size());
 				return selection;
 			}
 		}).when(service).select(anyMap(), any(Range.class), anyList());
 		
-		assertEquals(selection, resource.select(null));
+		assertEquals(selection, resource.select(null, null));
 	}
 	
 	@Test
 	@SuppressWarnings("unchecked")
-	public void testSelectByName() {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+	public void testSelectByOnwerIdAndCategoryId() {
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
-		final String name = "test";
-		final ArrayList<User> selection = new ArrayList<User>();
-		doAnswer(new Answer<List<User>>() {
+		final Long ownerId = 1234L;
+		final Long categoryId = 5678L;
+		final ArrayList<Link> selection = new ArrayList<Link>();
+		doAnswer(new Answer<List<Link>>() {
 			@Override
-			public List<User> answer(InvocationOnMock invocation) throws Throwable {
+			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
 				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
-				assertEquals(1, filters.size());
-				assertEquals(name, filters.get("name"));
+				assertEquals(2, filters.size());
+				assertEquals(ownerId, filters.get("ownerId"));
+				assertEquals(categoryId, filters.get("categoryId"));
 				return selection;
 			}
 		}).when(service).select(anyMap(), any(Range.class), anyList());
 		
-		assertEquals(selection, resource.select(name));
+		assertEquals(selection, resource.select(ownerId, categoryId));
+		verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
+	}
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSelectByWrongOnwerIdAndWrongCategoryId() {
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
+		
+		final Long ownerId = 0L;
+		final Long categoryId = 0L;
+		final ArrayList<Link> selection = new ArrayList<Link>();
+		doAnswer(new Answer<List<Link>>() {
+			@Override
+			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
+				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
+				assertEquals(0, filters.size());
+				return selection;
+			}
+		}).when(service).select(anyMap(), any(Range.class), anyList());
+		
+		assertEquals(selection, resource.select(ownerId, categoryId));
 		verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
 	}
 
@@ -94,7 +118,7 @@ public class UserResourceTest {
 	public void testSelectAnnotations() {
 		int annotationNb = 2;
 		String methodName = "select";
-		Class<UserResource> candidate = UserResource.class;
+		Class<LinkResource> candidate = LinkResource.class;
 
 		Method method = null;
 		for (Method m : candidate.getDeclaredMethods()) {
@@ -119,11 +143,11 @@ public class UserResourceTest {
 
 	@Test
 	public void testGet() {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
 		final Long id = 12345L;
-		final User candidate = new User();
+		final Link candidate = new Link();
 		when(service.get(id)).thenReturn(candidate);
 		
 		assertEquals(candidate, resource.get(id));
@@ -135,7 +159,7 @@ public class UserResourceTest {
 	public void testGetAnnotations() {
 		int annotationNb = 3;
 		String methodName = "get";
-		Class<UserResource> candidate = UserResource.class;
+		Class<LinkResource> candidate = LinkResource.class;
 
 		Method method = null;
 		for (Method m : candidate.getDeclaredMethods()) {
@@ -165,27 +189,27 @@ public class UserResourceTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCreate() throws URISyntaxException {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
 		final Long id = 12345L;
-		final User candidate = new User();
-		Key<AbstractBase<User>> storeKey = mock(Key.class);
+		final Link candidate = new Link();
+		Key<AbstractBase<Link>> storeKey = mock(Key.class);
 		when(service.create(candidate)).thenReturn(storeKey);
 		when(storeKey.getId()).thenReturn(id);
 		
 		Response response = resource.create(candidate);
 		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-		assertEquals("/api/user/" + id, ((URI) response.getLocation()).toString());
+		assertEquals("/api/link/" + id, ((URI) response.getLocation()).toString());
 		verify(service, times(1)).create(candidate);
-		verify(service, times(1)).create(any(User.class));
+		verify(service, times(1)).create(any(Link.class));
 	}
 
 	@Test
 	public void testCreateAnnotations() {
 		int annotationNb = 3;
 		String methodName = "create";
-		Class<UserResource> candidate = UserResource.class;
+		Class<LinkResource> candidate = LinkResource.class;
 
 		Method method = null;
 		for (Method m : candidate.getDeclaredMethods()) {
@@ -215,23 +239,23 @@ public class UserResourceTest {
 
 	@Test
 	public void testUpdate() throws URISyntaxException {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
 		final Long id = 12345L;
-		final User candidate = new User();
+		final Link candidate = new Link();
 		when(service.update(id, candidate)).thenReturn(candidate);
 
 		assertEquals(candidate, resource.update(id, candidate));
 		verify(service, times(1)).update(id, candidate);
-		verify(service, times(1)).update(anyLong(), any(User.class));
+		verify(service, times(1)).update(anyLong(), any(Link.class));
 	}
 
 	@Test
 	public void testUpdateAnnotations() {
 		int annotationNb = 4;
 		String methodName = "update";
-		Class<UserResource> candidate = UserResource.class;
+		Class<LinkResource> candidate = LinkResource.class;
 
 		Method method = null;
 		for (Method m : candidate.getDeclaredMethods()) {
@@ -265,8 +289,8 @@ public class UserResourceTest {
 
 	@Test
 	public void testDelete() throws URISyntaxException {
-		UserService service = mock(UserService.class);
-		UserResource resource = new UserResource(service);
+		LinkService service = mock(LinkService.class);
+		LinkResource resource = new LinkResource(service);
 		
 		final Long id = 12345L;
 
@@ -279,7 +303,7 @@ public class UserResourceTest {
 	public void testDeleteAnnotations() {
 		int annotationNb = 2;
 		String methodName = "delete";
-		Class<UserResource> candidate = UserResource.class;
+		Class<LinkResource> candidate = LinkResource.class;
 
 		Method method = null;
 		for (Method m : candidate.getDeclaredMethods()) {

@@ -32,23 +32,23 @@ public class CategoryService extends AbstractAuthService<Category> {
     }
     
     @Override
-    public Category update(Long id, Category entity) {
+    public Category update(Category existing, Category entity) {
         
         // Special case of the category order update => other categories should be shifted accordingly
         if (entity.getOrder() != null) {
-            Category existing = get(id);
 
             // Check if there's a move
             Long existingOrder = existing.getOrder() == null ? Long.valueOf(0L) : existing.getOrder();
-            Long entityOrder = entity.getOrder();
+            Long entityOrder = entity.getOrder(); // Entity order has already been identified as non null
+            
             if (!existingOrder.equals(entityOrder)) {
                 // Get the direction of the move
-                boolean moveNearerFirst = existingOrder == null && entityOrder != null || 0 < existingOrder.compareTo(entityOrder);
+                boolean moveNearerFirst = 0 < existingOrder.compareTo(entityOrder);
                 
                 // Pass all categories in review and move them if they've been affected by the move
                 try {
-	                for (Category category: super.select(null, null, null)) {
-	                    if (!category.getId().equals(id) && category.getOrder() != null) {
+	                for (Category category: select(null, null, null)) { // Ordered selection defined above
+	                    if (!category.getId().equals(existing.getId()) && category.getOrder() != null) {
 	                        Long categoryOrder = category.getOrder();
 	                        if (moveNearerFirst) {
 	                            // Move back the categories that were placed between the new place and the old place
@@ -73,12 +73,9 @@ public class CategoryService extends AbstractAuthService<Category> {
                 	throw new ServerErrorException("Cannot update the category order because one of them is not cloneable!", ex);
                 }
             }
-            
-            // Update the submitted entities, with all passed updated fields
-            return super.update(existing, entity);
         }
         
         // Just the normal update
-        return super.update(id, entity);
+        return super.update(existing, entity);
     }
 }

@@ -21,7 +21,7 @@ public class UserService extends AbstractService<User> {
         super(dao);
     }
     
-    protected com.google.appengine.api.users.UserService getSystemUserService() {
+    public com.google.appengine.api.users.UserService getSystemUserService() {
     	return UserServiceFactory.getUserService();
     }
 

@@ -72,7 +72,7 @@ public class AbstractDaoTest {
 	public void testGetByKey() {
 		AbstractDao<TestModel> dao = spy(new AbstractDao<TestModel>() {});
 
-		Long realKey = Long.valueOf(12345L);
+		Long realKey = 12345L;
 		LoadType<TestModel> typedLoader = mock(LoadType.class);
 		LoadResult<TestModel> resultLoader = mock(LoadResult.class);
 		TestModel realValue = new TestModel();
@@ -99,7 +99,7 @@ public class AbstractDaoTest {
 		AbstractDao<TestModel> dao = spy(new AbstractDao<TestModel>() {});
 
 		String condition = "key";
-		Long realKey = Long.valueOf(12345L);
+		Long realKey = 12345L;
 		LoadType<TestModel> typedLoader = mock(LoadType.class);
 		LoadResult<TestModel> resultLoader = mock(LoadResult.class);
 		TestModel realValue = new TestModel();
@@ -203,7 +203,7 @@ public class AbstractDaoTest {
 
 		String condition = "key";
 		String updatedCondition = condition + " = ";
-		Long realKey = Long.valueOf(12345L);
+		Long realKey = 12345L;
 		HashMap<String, Object> criteria = new HashMap<String, Object>();
 		criteria.put(condition, realKey);
 		
@@ -227,7 +227,7 @@ public class AbstractDaoTest {
 		AbstractDao<TestModel> dao = spy(new AbstractDao<TestModel>() {});
 
 		String condition = "key <";
-		Long realKey = Long.valueOf(12345L);
+		Long realKey = 12345L;
 		HashMap<String, Object> criteria = new HashMap<String, Object>();
 		criteria.put(condition, realKey);
 		
@@ -325,7 +325,7 @@ public class AbstractDaoTest {
 
 		String condition = "key";
 		String updatedCondition = condition + " = ";
-		List<Long> realKeys = Arrays.asList(new Long[] { Long.valueOf(12345L) });
+		List<Long> realKeys = Arrays.asList(new Long[] { 12345L });
 		HashMap<String, Object> criteria = new HashMap<String, Object>();
 		criteria.put(condition, realKeys);
 		
@@ -350,7 +350,7 @@ public class AbstractDaoTest {
 
 		String condition = "key";
 		String updatedCondition = condition + " IN ";
-		List<Long> realKeys = Arrays.asList(new Long[] { Long.valueOf(12345L), Long.valueOf(345678L) });
+		List<Long> realKeys = Arrays.asList(new Long[] { 12345L, 345678L });
 		HashMap<String, Object> criteria = new HashMap<String, Object>();
 		criteria.put(condition, realKeys);
 		
@@ -553,17 +553,17 @@ public class AbstractDaoTest {
 		
 		Objectify ofy = mock(Objectify.class);
 		Deleter deleter = mock(Deleter.class);
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		DeleteType deletedType = mock(DeleteType.class);
 		Result<Void> deletedResult = mock(Result.class);
 
 		doReturn(ofy).when(dao).getOfy();
 		when(ofy.delete()).thenReturn(deleter);
 		when(deleter.type(TestModel.class)).thenReturn(deletedType);
-		when(deletedType.id(key)).thenReturn(deletedResult);
+		when(deletedType.id(id)).thenReturn(deletedResult);
 		when(deletedResult.now()).thenReturn(null);
 		
-		dao.delete(key);
+		dao.delete(id);
 		verify(dao, times(1)).getOfy();
 		verify(deletedResult, times(1)).now();
 	}

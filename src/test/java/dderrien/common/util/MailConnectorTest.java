@@ -46,13 +46,12 @@ public class MailConnectorTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         MailConnector.setMockLogger(mock(Logger.class));
-        helper = new LocalServiceTestHelper(new LocalMailServiceTestConfig().setLogMailBody(false).setLogMailLevel(Level.FINEST)).setEnvIsLoggedIn(false);
+        helper = new LocalServiceTestHelper(new LocalMailServiceTestConfig().setLogMailLevel(Level.FINEST));
     }
 
     @Before
     public void setUp() throws Exception {
     	helper.setUp();
-    	helper.setEnvIsLoggedIn(false);
     }
 
     @After

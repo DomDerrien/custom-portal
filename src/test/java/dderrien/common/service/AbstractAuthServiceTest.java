@@ -67,11 +67,11 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		final List<TestModel> selection = Arrays.asList(new TestModel[] { new TestModel() });
 		doAnswer(new Answer<List<TestModel>>() {
@@ -79,7 +79,7 @@ public class AbstractAuthServiceTest {
 			public List<TestModel> answer(InvocationOnMock invocation) throws Throwable {
 				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
 				assertEquals(1, filters.size());
-				assertEquals(key, filters.get("ownerId"));
+				assertEquals(id, filters.get("ownerId"));
 				return selection;
 			}
 		}).when(dao).select(anyMap(), any(Range.class), anyList());
@@ -97,14 +97,14 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		final Map<String, Object> filters = new HashMap<>();
-		filters.put("ownerId", key);
+		filters.put("ownerId", id);
 		filters.put("name", "test");
 		
 		final List<TestModel> selection = Arrays.asList(new TestModel[] { new TestModel() });
@@ -113,7 +113,7 @@ public class AbstractAuthServiceTest {
 			public List<TestModel> answer(InvocationOnMock invocation) throws Throwable {
 				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
 				assertEquals(2, filters.size());
-				assertEquals(key, filters.get("ownerId"));
+				assertEquals(id, filters.get("ownerId"));
 				assertEquals("test", filters.get("name"));
 				return selection;
 			}
@@ -133,11 +133,11 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		final Map<String, Object> filters = new HashMap<>();
 		filters.put("name", "test");
@@ -148,7 +148,7 @@ public class AbstractAuthServiceTest {
 			public List<TestModel> answer(InvocationOnMock invocation) throws Throwable {
 				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
 				assertEquals(2, filters.size());
-				assertEquals(key, filters.get("ownerId"));
+				assertEquals(id, filters.get("ownerId"));
 				assertEquals("test", filters.get("name"));
 				return selection;
 			}
@@ -167,14 +167,14 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		final Map<String, Object> filters = new HashMap<>();
-		filters.put("ownerId", key * 2);
+		filters.put("ownerId", id * 2);
 
 		service.select(filters, null, null);
 	}
@@ -185,15 +185,15 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		TestModel candidate = new TestModel();
-		when(dao.get(key)).thenReturn(candidate);
+		when(dao.get(id)).thenReturn(candidate);
 
-		assertEquals(candidate, service.get(key));
+		assertEquals(candidate, service.get(id));
 		verify(userService, times(1)).isLoggedAdmin();
-		verify(dao, times(1)).get(key);
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 	}
 	
@@ -203,20 +203,20 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		TestModel candidate = new TestModel();
-		candidate.setOwnerId(key);
-		when(dao.get(key)).thenReturn(candidate);
+		candidate.setOwnerId(id);
+		when(dao.get(id)).thenReturn(candidate);
 
-		assertEquals(candidate, service.get(key));
+		assertEquals(candidate, service.get(id));
 		verify(userService, times(1)).isLoggedAdmin();
 		verify(userService, times(1)).getLoggedUser();
-		verify(dao, times(1)).get(key);
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 	}
 	
@@ -227,17 +227,17 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 		
 		TestModel candidate = new TestModel();
-		candidate.setOwnerId(key * 2);
-		when(dao.get(key)).thenReturn(candidate);
+		candidate.setOwnerId(id * 2);
+		when(dao.get(id)).thenReturn(candidate);
 
-		service.get(key);
+		service.get(id);
 	}
 	
 	@Test
@@ -250,10 +250,10 @@ public class AbstractAuthServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		TestModel candidate = new TestModel();
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(storeKey);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(candidate)).thenReturn(key);
 
-		assertEquals(storeKey, service.create(candidate));
+		assertEquals(key, service.create(candidate));
 		verify(userService, times(1)).isLoggedAdmin();
 		verify(dao, times(1)).save(candidate);
 		verify(dao, times(1)).save(any(TestModel.class));
@@ -266,18 +266,18 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 
 		TestModel candidate = new TestModel();
-		candidate.setOwnerId(key);
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(storeKey);
+		candidate.setOwnerId(id);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(candidate)).thenReturn(key);
 
-		assertEquals(storeKey, service.create(candidate));
+		assertEquals(key, service.create(candidate));
 		verify(userService, times(1)).isLoggedAdmin();
 		verify(userService, times(1)).getLoggedUser();
 		verify(dao, times(1)).save(candidate);
@@ -292,16 +292,16 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 
 		TestModel candidate = new TestModel();
-		candidate.setOwnerId(key * 2);
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(storeKey);
+		candidate.setOwnerId(id * 2);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(candidate)).thenReturn(key);
 
 		service.create(candidate);
 	}
@@ -315,20 +315,20 @@ public class AbstractAuthServiceTest {
 
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		TestModel original = new TestModel();
-		original.setId(key);
+		original.setId(id);
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
+		candidate.setId(id);
 		candidate.setTest("test");
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.get(key)).thenReturn(original).thenReturn(candidate);
-		when(dao.save(original)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(key);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.get(id)).thenReturn(original).thenReturn(candidate);
+		when(dao.save(original)).thenReturn(key);
+		when(key.getId()).thenReturn(id);
 
-		assertEquals(candidate, service.update(key, candidate));
+		assertEquals(candidate, service.update(id, candidate));
 		verify(userService, times(2)).isLoggedAdmin();
-		verify(dao, times(2)).get(key);
+		verify(dao, times(2)).get(id);
 		verify(dao, times(1)).save(original);
 		verify(dao, times(1)).save(any(TestModel.class));
 	}
@@ -340,28 +340,28 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 
 		TestModel original = new TestModel();
-		original.setId(key);
-		original.setOwnerId(key);
+		original.setId(id);
+		original.setOwnerId(id);
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
+		candidate.setId(id);
 		candidate.setTest("test");
-		candidate.setOwnerId(key);
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.get(key)).thenReturn(original).thenReturn(candidate);
-		when(dao.save(original)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(key);
+		candidate.setOwnerId(id);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.get(id)).thenReturn(original).thenReturn(candidate);
+		when(dao.save(original)).thenReturn(key);
+		when(key.getId()).thenReturn(id);
 
-		assertEquals(candidate, service.update(key, candidate));
+		assertEquals(candidate, service.update(id, candidate));
 		verify(userService, times(2)).isLoggedAdmin();
 		verify(userService, times(2)).getLoggedUser();
-		verify(dao, times(2)).get(key);
+		verify(dao, times(2)).get(id);
 		verify(dao, times(1)).save(original);
 		verify(dao, times(1)).save(any(TestModel.class));
 	}
@@ -374,24 +374,24 @@ public class AbstractAuthServiceTest {
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
-		final Long key = Long.valueOf(12345L);
+		final Long id = 12345L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
-		when(user.getId()).thenReturn(key);
+		when(user.getId()).thenReturn(id);
 
 		TestModel original = new TestModel();
-		original.setId(key);
-		original.setOwnerId(key);
+		original.setId(id);
+		original.setOwnerId(id);
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
-		candidate.setOwnerId(key * 2);
+		candidate.setId(id);
+		candidate.setOwnerId(id * 2);
 		candidate.setTest("test");
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.get(key)).thenReturn(original).thenReturn(candidate);
-		when(dao.save(original)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(key);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.get(id)).thenReturn(original).thenReturn(candidate);
+		when(dao.save(original)).thenReturn(key);
+		when(key.getId()).thenReturn(id);
 
-		service.update(key, candidate);
+		service.update(id, candidate);
 	}
 }

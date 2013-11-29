@@ -112,6 +112,11 @@ public class MailConnector {
      * @throws UnsupportedEncodingException if the e-mail address is invalid
      */
     public static void sendMailMessage(String receiverId, String recipientName, String subject, String message, Locale locale) throws MessagingException, UnsupportedEncodingException {
+        if (0 < foolMessagePost) {
+            foolMessagePost --;
+            throw new MessagingException("Done in purpose!");
+        }
+
         InternetAddress recipient = new InternetAddress(receiverId, recipientName, "UTF8");
 
         Session session = Session.getDefaultInstance(new Properties(), null);

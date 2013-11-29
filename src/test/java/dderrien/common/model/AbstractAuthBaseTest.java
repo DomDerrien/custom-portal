@@ -17,7 +17,7 @@ public class AbstractAuthBaseTest {
 
 	@Test
 	public void testAccessors() {
-		Long ownerId = Long.valueOf(12345L);
+		Long ownerId = 12345L;
 		
 		TestModel entity = new TestModel();
 		entity.setOwnerId(ownerId);

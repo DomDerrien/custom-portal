@@ -85,12 +85,12 @@ public class AbstractServiceTest {
 		TestDao dao = mock(TestDao.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel candidate = new TestModel();
-		when(dao.get(key)).thenReturn(candidate);
+		when(dao.get(id)).thenReturn(candidate);
 		
-		assertEquals(candidate, service.getSilent(key));
-		verify(dao, times(1)).get(key);
+		assertEquals(candidate, service.getSilent(id));
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 	}
 
@@ -100,10 +100,10 @@ public class AbstractServiceTest {
 		when(dao.getModelClass()).thenReturn(TestModel.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
-		when(dao.get(key)).thenReturn(null);
+		Long id = 12345L;
+		when(dao.get(id)).thenReturn(null);
 		
-		service.get(key);
+		service.get(id);
 	}
 
 	@Test
@@ -111,12 +111,12 @@ public class AbstractServiceTest {
 		TestDao dao = mock(TestDao.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel candidate = new TestModel();
-		when(dao.get(key)).thenReturn(candidate);
+		when(dao.get(id)).thenReturn(candidate);
 		
-		assertEquals(candidate, service.get(key));
-		verify(dao, times(1)).get(key);
+		assertEquals(candidate, service.get(id));
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 	}
 
@@ -126,10 +126,10 @@ public class AbstractServiceTest {
 		when(dao.getModelClass()).thenReturn(TestModel.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
-		when(dao.get(key)).thenReturn(candidate);
+		candidate.setId(id);
+		when(dao.get(id)).thenReturn(candidate);
 		
 		service.create(candidate);
 	}
@@ -141,10 +141,10 @@ public class AbstractServiceTest {
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
 		TestModel candidate = new TestModel();
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(storeKey);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(candidate)).thenReturn(key);
 		
-		assertEquals(storeKey, service.create(candidate));
+		assertEquals(key, service.create(candidate));
 		verify(dao, times(0)).get(anyLong());
 		verify(dao, times(1)).save(candidate);
 		verify(dao, times(1)).save(any(TestModel.class));
@@ -156,15 +156,15 @@ public class AbstractServiceTest {
 		TestDao dao = mock(TestDao.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
-		when(dao.get(key)).thenReturn(null);
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(storeKey);
+		candidate.setId(id);
+		when(dao.get(id)).thenReturn(null);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(candidate)).thenReturn(key);
 		
-		assertEquals(storeKey, service.create(candidate));
-		verify(dao, times(1)).get(key);
+		assertEquals(key, service.create(candidate));
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 		verify(dao, times(1)).save(candidate);
 		verify(dao, times(1)).save(any(TestModel.class));
@@ -176,14 +176,14 @@ public class AbstractServiceTest {
 		when(dao.getModelClass()).thenReturn(TestModel.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel original = new TestModel();
-		original.setId(key);
+		original.setId(id);
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
-		when(dao.get(key)).thenReturn(candidate);
+		candidate.setId(id);
+		when(dao.get(id)).thenReturn(candidate);
 		
-		service.update(key, candidate);
+		service.update(id, candidate);
 	}
 
 	@Test
@@ -192,23 +192,23 @@ public class AbstractServiceTest {
 		TestDao dao = mock(TestDao.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
+		Long id = 12345L;
 		TestModel original = new TestModel();
-		original.setId(key);
+		original.setId(id);
 		original.setTest("original");
 		TestModel candidate = new TestModel();
-		candidate.setId(key);
+		candidate.setId(id);
 		candidate.setTest("candidate");
-		Key<AbstractBase<TestModel>> storeKey = mock(Key.class);
-		when(dao.save(original)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(key);
-		when(dao.get(key)).thenReturn(candidate);
+		Key<AbstractBase<TestModel>> key = mock(Key.class);
+		when(dao.save(original)).thenReturn(key);
+		when(key.getId()).thenReturn(id);
+		when(dao.get(id)).thenReturn(candidate);
 		
 		assertEquals(candidate, service.update(original, candidate));
 		verify(dao, times(1)).save(original);
 		verify(dao, times(1)).save(any(TestModel.class));
-		verify(storeKey, times(1)).getId();
-		verify(dao, times(1)).get(key);
+		verify(key, times(1)).getId();
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 	}
 	
@@ -217,13 +217,13 @@ public class AbstractServiceTest {
 		TestDao dao = mock(TestDao.class);
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
-		Long key = Long.valueOf(12345L);
-		when(dao.get(key)).thenReturn(new TestModel());
+		Long id = 12345L;
+		when(dao.get(id)).thenReturn(new TestModel());
 		
-		service.delete(key);
-		verify(dao, times(1)).get(key);
+		service.delete(id);
+		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
-		verify(dao, times(1)).delete(key);
+		verify(dao, times(1)).delete(id);
 		verify(dao, times(1)).delete(anyLong());
 	}
 }
