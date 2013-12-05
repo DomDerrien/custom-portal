@@ -4,7 +4,7 @@
     contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"
     import="java.util.List"
-    import="dderrien.model.User"
+    import="dderrien.common.model.User"
 %><html lang="en">
 <head>
 	<meta charset="utf-8">

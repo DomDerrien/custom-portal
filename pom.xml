@@ -72,6 +72,11 @@
         	<artifactId>resteasy-jackson2-provider</artifactId>
         	<version>3.0.5.Final</version>
         </dependency>
+        <dependency>
+        	<groupId>joda-time</groupId>
+        	<artifactId>joda-time</artifactId>
+        	<version>2.3</version>
+        </dependency>
 
         <dependency>
         	<groupId>org.dojotoolkit</groupId>
@@ -105,10 +110,27 @@
             <version>${appengine.target.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+        	<groupId>org.seleniumhq.selenium</groupId>
+        	<artifactId>selenium-java</artifactId>
+        	<version>2.37.1</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.seleniumhq.selenium</groupId>
+        	<artifactId>selenium-server</artifactId>
+        	<version>2.37.1</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.seleniumhq.selenium</groupId>
+        	<artifactId>selenium-remote-driver</artifactId>
+        	<version>2.37.1</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+        	<!-- To compile the code -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <version>2.5.1</version>
@@ -119,6 +141,7 @@
                 </configuration>
             </plugin>
 
+			<!-- To produce the WAR file -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -148,6 +171,7 @@
                 </configuration>
             </plugin>
 
+			<!-- To start the App Engine Server -->
             <plugin>
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-maven-plugin</artifactId>
@@ -156,8 +180,39 @@
                 	<port>9090</port>
                 	<disableUpdateCheck>true</disableUpdateCheck>
                 </configuration>
+				<executions>
+					<execution>
+						<id>server-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>devserver_start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>server-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>devserver_stop</goal>
+						</goals>
+					</execution>
+				</executions>
             </plugin>
-        </plugins>
+
+			<!-- To process the integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+       </plugins>
     </build>
 
 	<reporting>

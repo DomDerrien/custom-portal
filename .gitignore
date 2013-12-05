@@ -1,6 +1,6 @@
 *~
+node_modules/
 war/WEB-INF/classes/
 war/WEB-INF/appengine-generated/
 .DS_Store
-/target
 /target

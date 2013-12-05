@@ -54,7 +54,7 @@ define(
 				return loggedUser;
 			}
 			var queryStr = window.location.search,
-				queryObj = queryStr ? ioQuery.queryToObject(queryStr	.substr(1)) : {};
+				queryObj = queryStr ? ioQuery.queryToObject(queryStr.substr(1)) : {};
 			if (queryObj.userId) {
 				for(var idx=0; idx<users.length; idx++) {
 					if (users[idx].id == queryObj.userId) {
