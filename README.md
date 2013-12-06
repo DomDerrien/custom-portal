@@ -60,10 +60,28 @@ As many programmers, my UI design skills are limited. Relying on [Bootstrap](htt
 widgets and a grid management system is an easy win. As Martin Pengelly-Philips did port the Bootstrap theme to Dojo, I use his
 [dbootstrap](https://github.com/thesociable/dbootstrap) library.
 
+Stylus for the CSS manipulation
+-------------------------------
+
+Whoever wrote the style sheet for a complex web site knows how easy it becomes messy. After LESS and Sass, two popular CSS pre-processors
+I want to give a try to [Stylus](http://learnboost.github.io/stylus/). I really like the use of mixins: to reduce the cluter with vendor
+prefixes, to define 'flexible layout' compliant classes, etc.
+
+Intern for the Dojo code testing
+--------------------------------
+
+[Intern](http://theintern.io/) is a relative new testing library that supports unit and functional tests. It uses node.js too, like Stylus.
+
+Selenium WebDriver for the interface testing
+--------------------------------------------
+
+Even if Intern supports the functional tests, I like the ease of [Selenium WebDriver](http://docs.seleniumhq.org/projects/webdriver/)
+test development. It relies on the server developer skills to test the Web client: it's not the same person doing the code and the tests.
+
 And friends
 ----------------------------------
 
 * [Guice](https://code.google.com/p/google-guice/wiki/Motivation) for the dependency injection
 * [Apache Shiro](http://shiro.apache.org/guice.html) for the authorization
 * [Joda Time](http://joda-time.sourceforge.net/) for handling dates
-* [maven](http://maven.apache.org/)
+* [maven](http://maven.apache.org/), especially for its extensible framework and the strong community building plugins
