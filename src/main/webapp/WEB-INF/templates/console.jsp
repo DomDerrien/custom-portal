@@ -126,13 +126,13 @@
     	<form id="addCatForm" data-dojo-type="dijit/form/Form">
 	        <div class="dijitDialogPaneContentArea">
 	        	<div style="text-align:right;">
-		        	<label>Titre :</label>
-		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true" type="text" name="title" placeholder="Titre de la catégorie">
+		        	<label for="addCatTitle">Titre :</label>
+		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true" type="text" id="addCatTitle" name="title" placeholder="Titre de la catégorie">
 		        </div>
 	        </div>
 	
 	        <div class="dijitDialogPaneActionBar">
-	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit">OK</button>
+	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit" id="addCatOK">OK</button>
 	            <button data-dojo-type="dijit/form/Button" type="button" id="addCatCancel">Cancel</button>
 	        </div>
        </form>
@@ -143,17 +143,17 @@
 	        <div class="dijitDialogPaneContentArea">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="categoryId" id="addLnkCatId">
 	        	<div style="text-align:right; margin-bottom:10px;">
-		        	<label>Titre :</label>
-		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true" type="text" name="title" placeholder="Titre de la référence">
+		        	<label for="addLnkTitle">Titre :</label>
+		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true" type="text" id="addLnkTitle" name="title" placeholder="Titre de la référence">
 		        </div>
 	        	<div style="text-align:right; margin-bottom:10px;">
-		        	<label>Adresse :</label>
-		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true, regExp:'http(?:s)?://\\S{8,}'" type="text" name="href" placeholder="Adresse de la référence">
+		        	<label for="addLnkHRef">Adresse :</label>
+		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true, regExp:'http(?:s)?://\\S{8,}'" type="text" id="addLnkHRef" name="href" placeholder="Adresse de la référence">
 		        </div>
 	        </div>
 	
 	        <div class="dijitDialogPaneActionBar">
-	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit">OK</button>
+	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit" id="addLnkOK">OK</button>
 	            <button data-dojo-type="dijit/form/Button" type="button" id="addLnkCancel">Cancel</button>
 	        </div>
        </form>
@@ -185,8 +185,8 @@
 	        <div class="dijitDialogPaneContentArea">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="id" id="setCatWidthId">
 		        <div style="text-align: right;">
-		        	<label>Choix de largeur :</label>
-		        	<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" style="width: 15.1em" name="width" id="setCatWidth">
+		        	<label for="setCatWidth">Choix de largeur :</label>
+		        	<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" style="width: 15.1em" id="setCatWidth" name="width">
 		        		<option value="span2">La plus étroite</option>
 		        		<option value="span3">Un quart</option>
 		        		<option value="span4">Un tiers</option>
@@ -199,7 +199,7 @@
 	        </div>
 	
 	        <div class="dijitDialogPaneActionBar">
-	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit">OK</button>
+	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit" id="setCatWidthOK">OK</button>
 	            <button data-dojo-type="dijit/form/Button" type="button" id="setCatWidthCancel">Cancel</button>
 	        </div>
        </form>
@@ -211,8 +211,8 @@
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="id" id="setCatOrderId">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="oldOrder" id="setCatOrderOld">
 		        <div style="text-align: right;">
-		        	<label>Choix de position :</label>
-		        	<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" style="width: 15.1em" name="order" id="setCatOrder">
+		        	<label for="setCatOrder">Choix de position :</label>
+		        	<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" style="width: 15.1em" id="setCatOrder" name="order">
 		        		<option value=" ">Choisir une position</option>
 		        		<option value="1">Première position</option>
 		        	</select>
@@ -220,7 +220,7 @@
 	        </div>
 	
 	        <div class="dijitDialogPaneActionBar">
-	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit">OK</button>
+	            <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit" id="setCatOrderOK">OK</button>
 	            <button data-dojo-type="dijit/form/Button" type="button" id="setCatOrderCancel">Cancel</button>
 	        </div>
        </form>

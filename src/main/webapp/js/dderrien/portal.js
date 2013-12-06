@@ -91,13 +91,14 @@ define(
 				}
 				
 				// Add the category block
-				var cell = table = construct.create('table', { 'class': (category.width == null ? 'span2' : category.width) + ' category', style: 'border-spacing: 0;' }, fluidRow),
+				var cell = table = construct.create('table', { id: 'catBox-' + idx, 'class': (category.width == null ? 'span2' : category.width) + ' category', style: 'border-spacing: 0;' }, fluidRow),
 					tr = construct.create('tr', {}, table),
-					th1 = construct.create('th', { style: 'width: 100%;', innerHTML: category.title }, tr),
+					th1 = construct.create('th', { id: 'catTitle-' + idx, style: 'width: 100%;', innerHTML: category.title }, tr),
 					td2 = construct.create('td', { style: 'vertical-align: top;' }, tr),
 					menu = new DropDownMenu({ style: 'display: none;'});
 
 			    menu.addChild(new MenuItem({
+			    	id: 'setCatTitle-' + idx,
 			        label: 'Renommer',
 			        onClick: function(){
 			        	registry.byId('setCatTitleId').set('value', category.id);
@@ -106,6 +107,7 @@ define(
 			        }
 			    }));
 			    menu.addChild(new MenuItem({
+			    	id: 'catDelete-' + idx,
 			        label: 'Retirer',
 			        onClick: function(){
 						_categoryStore.remove(category.id).then(
@@ -116,6 +118,7 @@ define(
 			    }));
 			    menu.addChild(new MenuSeparator());
 			    menu.addChild(new MenuItem({
+			    	id: 'catAddLink-' + idx,
 			        label: 'Ajouter une référence',
 			        onClick: function(){
 			        	registry.byId('addLnkCatId').set('value', category.id);
@@ -124,6 +127,7 @@ define(
 			    }));
 			    menu.addChild(new MenuSeparator());
 			    menu.addChild(new MenuItem({
+			    	id: 'setCatWidth-' + idx,
 			        label: 'Changer la largeur',
 			        onClick: function(){
 			        	registry.byId('setCatWidthId').set('value', category.id);
@@ -132,6 +136,7 @@ define(
 			        }
 			    }));
 			    menu.addChild(new MenuItem({
+			    	id: 'setCatOrder-' + idx,
 			        label: 'Changer la position',
 			        onClick: function(){
 			        	var orderList = registry.byId('setCatOrder'), optionList = orderList.get('options'), idx = 1;
@@ -149,26 +154,27 @@ define(
 			        }
 			    }));
 			    td2.appendChild(new DropDownButton({
+			    	id: 'catCtxtMenu-' + idx,
 			        label: category.title,
 			        showLabel: false,
 			        dropDown: menu
 			    }).domNode);
 
 				// Add the link blocks
-				_buildLinkPanes(table, category);
+				_buildLinkPanes(table, category, idx);
 			});
 		};
 
-		var _buildLinkPanes = function(table, category){
+		var _buildLinkPanes = function(table, category, catIdx){
 
-			_linkStore.query({ categoryId: category.id }).forEach(function(link){
+			_linkStore.query({ categoryId: category.id }).forEach(function(link, linkIdx){
 				
 				// Add the link
 				var tr = construct.create('tr', {}, table),
 					td1 = construct.create('td', {}, tr),
-					a = construct.create('a', { href: link.href, target: '_blank', innerHTML: link.title }, td1),
+					a = construct.create('a', { id: 'linkAnchor-' + catIdx + '-' + linkIdx, href: link.href, target: '_blank', innerHTML: link.title }, td1),
 					td2 = construct.create('td', { style: 'text-align: center; vertical-align: top;' }, tr),
-					span = construct.create('span', { 'class': 'icon-remove' }, td2);
+					span = construct.create('span', { id: 'linkDelete-' + catIdx + '-' + linkIdx, 'class': 'icon-remove' }, td2);
 
 				dojo.connect(span, 'onclick', function(evt){
 					_linkStore.remove(link.id).then(
@@ -208,7 +214,7 @@ define(
 			// To manage a category
 			dojo.connect(dom.byId('addCatForm'), 'onsubmit', function(evt){
 				evt.preventDefault();
-				
+
 				var form = registry.byId('addCatForm');
 				if (!form.validate()) {
 					return false;
