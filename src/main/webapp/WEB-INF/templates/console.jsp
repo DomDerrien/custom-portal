@@ -34,12 +34,12 @@
 	            </div>
 	        </div><%
 	        List<User> users = (List<User>) request.getAttribute("users");
-	        if (users != null) { %>
+	        if (users != null && 1 < users.size()) { %>
 	        <div style="float: right; margin: 6px 0;">
 		        <label class="brand" for="userList" style="font-size: 14px;">Usagers : </label>
 				<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" id="userList"><%
 	            	for (User user: users) { %>
-			        <option value="<%= user.getId() %>"><%= user.getName() %></option><%
+			        <option value="<%= user.getId() %>"<% if (user.getId().equals(((User) request.getAttribute("user")).getId())) {%> selected=selected<% } %>><%= user.getName() %></option><%
 	            	} %>
 				</select>
 			</div><%
@@ -148,7 +148,7 @@
 		        </div>
 	        	<div style="text-align:right; margin-bottom:10px;">
 		        	<label for="addLnkHRef">Adresse :</label>
-		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true, regExp:'http(?:s)?://\\S{8,}'" type="text" id="addLnkHRef" name="href" placeholder="Adresse de la référence">
+		            <input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true, pattern:'http(?:s)?://\\S{8,}'" type="text" id="addLnkHRef" name="href" placeholder="Adresse de la référence">
 		        </div>
 	        </div>
 	

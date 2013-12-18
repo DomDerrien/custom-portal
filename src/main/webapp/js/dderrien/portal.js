@@ -47,14 +47,14 @@ define(
         };
 
         var _detectCurrent = function(loggedUser, users) {
-            if (users === null || users.length < 0) {
+            if (users === undefined || users.length < 2) {
                 return loggedUser;
             }
             var queryStr = window.location.search,
                 queryObj = queryStr ? ioQuery.queryToObject(queryStr.substr(1)) : {};
-            if (queryObj.userId) {
+            if (queryObj.userId !== undefined) {
                 for (var idx = 0; idx < users.length; idx++) {
-                    if (users[idx].id === queryObj.userId) {
+                    if (users[idx].id === parseInt(queryObj.userId)) {
                         registry.byId('userList').set('value', '' + users[idx].id);
                         return users[idx];
                     }
@@ -110,6 +110,11 @@ define(
                     style: 'border-spacing: 0;'
                 }, fluidRow),
                     tr = construct.create('tr', {}, table),
+                    th1 = construct.create('th', {
+                        id: 'catTitle-' + idx,
+                        style: 'width: 100%;',
+                        innerHTML: category.title
+                    }, tr),
                     td2 = construct.create('td', {
                         style: 'vertical-align: top;'
                     }, tr),
@@ -117,11 +122,7 @@ define(
                         style: 'display: none;'
                     });
 
-                construct.create('th', { // because JSHint complains about th1 being unused
-                    id: 'catTitle-' + idx,
-                    style: 'width: 100%;',
-                    innerHTML: category.title
-                }, tr);
+                th1 = th1; // To prevent jshint complaining about unused variable, will be remove by JavaScript compiler
 
                 menu.addChild(new MenuItem({
                     id: 'setCatTitle-' + idx,
@@ -215,17 +216,18 @@ define(
                     td2 = construct.create('td', {
                         style: 'text-align: center; vertical-align: top;'
                     }, tr),
+                    ref = construct.create('a', {
+                        id: 'linkAnchor-' + catIdx + '-' + linkIdx,
+                        href: link.href,
+                        target: '_blank',
+                        innerHTML: link.title
+                    }, td1),
                     span = construct.create('span', {
                         id: 'linkDelete-' + catIdx + '-' + linkIdx,
                         'class': 'icon-remove'
                     }, td2);
 
-                construct.create('a', { // because JSHint complains about th1 being unused
-                    id: 'linkAnchor-' + catIdx + '-' + linkIdx,
-                    href: link.href,
-                    target: '_blank',
-                    innerHTML: link.title
-                }, td1);
+                ref = ref; // To prevent jshint complaining about unused variable, will be remove by JavaScript compiler
 
                 dojo.connect(span, 'onclick', function( /* evt */ ) {
                     _linkStore.remove(link.id).then(

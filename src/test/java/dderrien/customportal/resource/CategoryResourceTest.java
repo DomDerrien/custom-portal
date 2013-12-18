@@ -1,6 +1,7 @@
 package dderrien.customportal.resource;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
@@ -37,10 +38,9 @@ import org.mockito.stubbing.Answer;
 import com.googlecode.objectify.Key;
 
 import dderrien.common.model.AbstractBase;
-import dderrien.customportal.model.Category;
-import dderrien.customportal.resource.CategoryResource;
-import dderrien.customportal.service.CategoryService;
 import dderrien.common.util.Range;
+import dderrien.customportal.model.Category;
+import dderrien.customportal.service.CategoryService;
 
 public class CategoryResourceTest {
 

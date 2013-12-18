@@ -31,3 +31,40 @@ body {
 .categories {
 	margin-bottom: 10px;
 }
+
+/*** Inspired from dropdown menu of bootstrap.css ***/
+.category {
+	padding: 0 5px;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	*border-right-width: 2px;
+	*border-bottom-width: 2px;
+	-webkit-border-radius: 6px;
+	   -moz-border-radius: 6px;
+	        border-radius: 6px;
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	   -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-webkit-background-clip: padding-box;
+	   -moz-background-clip: padding;
+	        background-clip: padding-box;
+}
+
+.category {
+	padding: 5px;
+}
+.category th {
+	font-weight: bold;
+	text-align: left;
+	font-size: larger;
+	padding-bottom: 4px;
+}
+
+.category .dijitDropDownButton {
+	margin: 0 !important; /* was 0.2 em */
+}
+
+.category .dijitDropDownButton .dijitButtonNode {
+	padding: 0 4px !important; /* was 6px 14px */
+}
