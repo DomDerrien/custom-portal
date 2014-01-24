@@ -16,8 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.appengine.api.users.UserServiceFactory;
-
 import dderrien.common.exception.NotFoundException;
 import dderrien.common.model.User;
 import dderrien.common.service.UserService;
@@ -53,7 +51,7 @@ public class ConsoleResource {
             user = new User();
             user.setName(systemUser.getNickname());
             user.setEmail(systemUser.getEmail());
-            user = userService.get(userService.create(user).getId());
+            user = userService.get(userService.create(user).getId(), 0L);
         }
 
         // Forwarding to the console page

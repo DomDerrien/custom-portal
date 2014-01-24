@@ -165,7 +165,7 @@ public class ConsoleResourceTest {
 		when(service.getLoggedUser()).thenThrow(NotFoundException.class);
 		when(service.create(any(User.class))).thenReturn(key);
 		when(key.getId()).thenReturn(id);
-		when(service.get(id)).thenReturn(savedUser);
+		when(service.get(id, 0L)).thenReturn(savedUser);
 		when(service.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 		when(service.selectSilent(null, null, null)).thenReturn(selection);
 		when(request.getRequestDispatcher("/WEB-INF/templates/console.jsp")).thenReturn(dispatcher);

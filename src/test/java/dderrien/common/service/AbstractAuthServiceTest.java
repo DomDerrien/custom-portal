@@ -184,14 +184,15 @@ public class AbstractAuthServiceTest {
 		TestDao dao = mock(TestDao.class);
 		UserService userService = mock(UserService.class);
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
-
-		final Long id = 12345L;
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
+		final Long id = 12345L;
+		final Long version = 4567L;
 		TestModel candidate = new TestModel();
+		candidate.setVersion(version + 1); // Stored version is older, no NotModifiedException thrown then
 		when(dao.get(id)).thenReturn(candidate);
 
-		assertEquals(candidate, service.get(id));
+		assertEquals(candidate, service.get(id, version));
 		verify(userService, times(1)).isLoggedAdmin();
 		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
@@ -209,11 +210,13 @@ public class AbstractAuthServiceTest {
 		when(userService.getLoggedUser()).thenReturn(user);
 		when(user.getId()).thenReturn(id);
 		
+		final Long version = 4567L;
 		TestModel candidate = new TestModel();
 		candidate.setOwnerId(id);
+		candidate.setVersion(version + 1); // Stored version is older, no NotModifiedException thrown then
 		when(dao.get(id)).thenReturn(candidate);
 
-		assertEquals(candidate, service.get(id));
+		assertEquals(candidate, service.get(id, version));
 		verify(userService, times(1)).isLoggedAdmin();
 		verify(userService, times(1)).getLoggedUser();
 		verify(dao, times(1)).get(id);
@@ -233,11 +236,13 @@ public class AbstractAuthServiceTest {
 		when(userService.getLoggedUser()).thenReturn(user);
 		when(user.getId()).thenReturn(id);
 		
+		final Long version = 4567L;
 		TestModel candidate = new TestModel();
 		candidate.setOwnerId(id * 2);
+		candidate.setVersion(version + 1); // Stored version is older, no NotModifiedException thrown then
 		when(dao.get(id)).thenReturn(candidate);
 
-		service.get(id);
+		service.get(id, version);
 	}
 	
 	@Test
@@ -316,8 +321,10 @@ public class AbstractAuthServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		final Long id = 12345L;
+		final Long version = 4567L;
 		TestModel original = new TestModel();
 		original.setId(id);
+		original.setVersion(version);
 		TestModel candidate = new TestModel();
 		candidate.setId(id);
 		candidate.setTest("test");
@@ -326,7 +333,7 @@ public class AbstractAuthServiceTest {
 		when(dao.save(original)).thenReturn(key);
 		when(key.getId()).thenReturn(id);
 
-		assertEquals(candidate, service.update(id, candidate));
+		assertEquals(candidate, service.update(id, version, candidate));
 		verify(userService, times(2)).isLoggedAdmin();
 		verify(dao, times(2)).get(id);
 		verify(dao, times(1)).save(original);
@@ -341,6 +348,7 @@ public class AbstractAuthServiceTest {
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
 		final Long id = 12345L;
+		final Long version = 4567L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
@@ -348,6 +356,7 @@ public class AbstractAuthServiceTest {
 
 		TestModel original = new TestModel();
 		original.setId(id);
+		original.setVersion(version);
 		original.setOwnerId(id);
 		TestModel candidate = new TestModel();
 		candidate.setId(id);
@@ -358,7 +367,7 @@ public class AbstractAuthServiceTest {
 		when(dao.save(original)).thenReturn(key);
 		when(key.getId()).thenReturn(id);
 
-		assertEquals(candidate, service.update(id, candidate));
+		assertEquals(candidate, service.update(id, version, candidate));
 		verify(userService, times(2)).isLoggedAdmin();
 		verify(userService, times(2)).getLoggedUser();
 		verify(dao, times(2)).get(id);
@@ -375,6 +384,7 @@ public class AbstractAuthServiceTest {
 		AbstractAuthService<TestModel> service = new AbstractAuthService<TestModel>(dao, userService) {};
 
 		final Long id = 12345L;
+		final Long version = 4567L;
 		User user = mock(User.class);
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.FALSE);
 		when(userService.getLoggedUser()).thenReturn(user);
@@ -382,6 +392,7 @@ public class AbstractAuthServiceTest {
 
 		TestModel original = new TestModel();
 		original.setId(id);
+		original.setVersion(version);
 		original.setOwnerId(id);
 		TestModel candidate = new TestModel();
 		candidate.setId(id);
@@ -392,6 +403,6 @@ public class AbstractAuthServiceTest {
 		when(dao.save(original)).thenReturn(key);
 		when(key.getId()).thenReturn(id);
 
-		service.update(id, candidate);
+		service.update(id, version, candidate);
 	}
 }

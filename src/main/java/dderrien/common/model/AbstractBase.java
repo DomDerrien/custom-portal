@@ -22,6 +22,7 @@ public abstract class AbstractBase<T> implements Cloneable {
 
     @Id private Long id;
     @Unindex protected Date creation;
+    @Unindex protected Long version;
 
     public AbstractBase() {
         super();
@@ -45,6 +46,15 @@ public abstract class AbstractBase<T> implements Cloneable {
         this.creation = creation;
     }
     
+    @WriteOnceField
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     @Override
     @SuppressWarnings({ "unchecked" })
     public String toString() {
@@ -145,6 +155,8 @@ public abstract class AbstractBase<T> implements Cloneable {
     protected void prePersist() {
         if (creation == null) {
             creation = new DateTime().toDate();
+            version = 1L;
         }
+        version += 1L;
     }
 }

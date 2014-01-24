@@ -16,8 +16,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.googlecode.objectify.Key;
 
@@ -47,31 +49,46 @@ public class CategoryResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Category get(@PathParam("id") Long id) {
-        return service.get(id);
+        return service.get(id, 0L);
     }
-    
+
+    @GET
+    @Path("/{id:\\d+}/{version:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Category getVersioned(@PathParam("id") Long id, @PathParam("version") long version) {
+        return service.get(id, version);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response createForIdOnly(Category entity, @Context UriInfo uriInfo) throws URISyntaxException {
+        Key<AbstractBase<Category>> key = service.create(entity);
+        return Response.status(201).location(new URI(uriInfo.getPath() + key.getId())).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Category entity) throws URISyntaxException {
+    public Response createForIdAndEntity(Category entity, @Context UriInfo uriInfo) throws URISyntaxException {
         Key<AbstractBase<Category>> key = service.create(entity);
-        return Response.status(201).entity(get(key.getId())).location(new URI("/api/category/" + key.getId())).build();
+        return Response.status(201).entity(get(key.getId())).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id:\\d+}/{version:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Category update(@PathParam("id") Long id, Category entity) {
-        return service.update(id, entity);
+    public Category update(@PathParam("id") Long id, @PathParam("version") long version, Category entity) {
+        return service.update(id, version, entity);
     }
 
     @DELETE
-    @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        service.delete(id);
+    @Path("/{id:\\d+}/{version:\\d+}")
+    public void delete(@PathParam("id") Long id, @PathParam("version") long version) {
+        service.delete(id, version);
     }
 }

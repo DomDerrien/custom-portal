@@ -42,8 +42,8 @@ public class AbstractAuthService<T extends AbstractAuthBase<T>> extends Abstract
     }
     
     @Override
-    public T get(Long id) {
-        T entity = super.get(id);
+    public T get(Long id, Long version, boolean throwConflictIfVersionDontMatch) {
+        T entity = super.get(id, version, throwConflictIfVersionDontMatch);
         if (!userService.isLoggedAdmin()) {
             if (!userService.getLoggedUser().getId().equals(entity.getOwnerId())) {
                 throw new UnauthorizedException(dao.getModelClass().getName() + " entity does not belong to the logged user");
@@ -63,13 +63,13 @@ public class AbstractAuthService<T extends AbstractAuthBase<T>> extends Abstract
     }    
 
     @Override
-    public T update(T existing, T entity) {
+    public T update(T existing, Long version, T entity) {
         if (!userService.isLoggedAdmin()) {
             if (!userService.getLoggedUser().getId().equals(entity.getOwnerId())) {
             	// Only the ownerId of the existing entity is checked, as the field is marked WriteOnceField and updates are ignored
                 throw new UnauthorizedException(dao.getModelClass().getName() + " entity needs to belong to the logged user");
             }
         }
-        return super.update(existing, entity);
+        return super.update(existing, version, entity);
     }
 }

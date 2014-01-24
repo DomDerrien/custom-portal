@@ -52,12 +52,15 @@ public class AbstractBaseTest {
 		
 		Long id = 12345L;
 		Date creation = new Date(123L);
+		Long version = 654756232343L;
 		
 		entity.setId(id);
 		entity.setCreation(creation);
+		entity.setVersion(version);
 		
 		assertEquals(id, entity.getId());
 		assertEquals(creation, entity.getCreation());
+		assertEquals(version, entity.getVersion());
 	}
 	
 	@Test
@@ -72,8 +75,9 @@ public class AbstractBaseTest {
 		TestModel entity = new TestModel();
 		entity.setId(12345L);
 		entity.setCreation(new Date(123L));
+		entity.setVersion(456789L);
 		
-		assertEquals("{ \"id\": 12345, \"creation\": 123 }", entity.toString());
+		assertEquals("{ \"id\": 12345, \"creation\": 123, \"version\": 456789 }", entity.toString());
 	}
 	
 	@Test
@@ -106,18 +110,22 @@ public class AbstractBaseTest {
 	public void testMergeNone() {
 		Long id = 12345L;
 		Date creation = new Date(123L);
+		Long version = 56789L;
 
 		TestModel entity = new TestModel();
 		entity.setId(id);
 		entity.setCreation(creation);
+		entity.setVersion(version);
 		
 		TestModel update = new TestModel();
 		update.setId(id * 2);
 		update.setCreation(new Date(creation.getTime() * 2));
+		update.setVersion(version * 2);
 		
 		assertFalse(entity.merge(update));
 		assertEquals(id, entity.getId());
 		assertEquals(creation, entity.getCreation());
+		assertEquals(version, entity.getVersion());
 	}
 	
 	@Test
@@ -179,14 +187,20 @@ public class AbstractBaseTest {
 		TestModel entity = new TestModel();
 		Date creation1 = entity.getCreation();
 		assertNull(creation1);
+		Long version1 = entity.getVersion();
+		assertNull(version1);
 		
 		entity.prePersist();
 		Date creation2 = entity.getCreation();
 		assertNotNull(creation2);
+		Long version2 = entity.getVersion();
+		assertNotNull(version2);
 
 		entity.prePersist();
 		Date creation3 = entity.getCreation();
 		assertNotNull(creation3);
 		assertEquals(creation2, creation3);
+		Long version3 = entity.getVersion();
+		assertEquals(version2.longValue() + 1L, version3.longValue());
 	}
 }

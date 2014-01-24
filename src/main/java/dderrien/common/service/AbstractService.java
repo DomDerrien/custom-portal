@@ -40,10 +40,22 @@ public class AbstractService<T extends AbstractBase<T>> {
         return dao.get(id);
     }
     
-    public T get(Long id) {
+    public T get(Long id, Long version) {
+        return get(id, version, false);
+    }
+    
+    protected T get(Long id, Long version, boolean throwConflictIfVersionDontMatch) {
         T entity = dao.get(id);
         if (entity == null) {
             throw new NotFoundException("Cannot find " + dao.getModelClass().getName() + " entity with id: "+ id);
+        }
+        if (!version.equals(Long.valueOf(0L))) {
+	        if (throwConflictIfVersionDontMatch && !entity.getVersion().equals(version)) {
+	            throw new ConflictException("Given version " + version + " does not match the saved one: " + entity.getVersion());
+	        }
+	        if (!throwConflictIfVersionDontMatch && entity.getVersion().equals(version)) {
+	            throw new NotModifiedException("No update since last request");
+	        }
         }
         return entity;
     }
@@ -58,21 +70,21 @@ public class AbstractService<T extends AbstractBase<T>> {
         return dao.save(entity);
     }
     
-    public T update (T existing, T entity) {
-        // Not need to check the id field as it is marked WriteOnceField and updates are ignored
+    public T update (T existing, Long version, T entity) {
+        // Not need to check the id and version fields as they are marked WriteOnceField and updates are ignored
         if (!existing.merge(entity)) {
             throw new NotModifiedException("Nothing to update");
         }
         return dao.get(dao.save(existing).getId());
     }
     
-    public T update (Long id, T entity) {
-        T existing = get(id); // Will throw NFE if entity does not exists
-        return update(existing, entity);
+    public T update (Long id, Long version, T entity) {
+        T existing = get(id, version, true); // Will throw NFE if entity does not exists
+        return update(existing, version, entity);
     }
 
-    public void delete(Long id) {
-        get(id); // Will throw NFE if entity does not exists
+    public void delete(Long id, Long version) {
+        get(id, version, true); // Will throw NFE if entity does not exists
         dao.delete(id);
     }
 }

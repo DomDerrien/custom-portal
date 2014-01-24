@@ -103,7 +103,7 @@ public class AbstractServiceTest {
 		Long id = 12345L;
 		when(dao.get(id)).thenReturn(null);
 		
-		service.get(id);
+		service.get(id, 0L);
 	}
 
 	@Test
@@ -115,9 +115,24 @@ public class AbstractServiceTest {
 		TestModel candidate = new TestModel();
 		when(dao.get(id)).thenReturn(candidate);
 		
-		assertEquals(candidate, service.get(id));
+		assertEquals(candidate, service.get(id, 0L));
 		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
+	}
+
+	@Test(expected = NotModifiedException.class)
+	public void testGetNotChanged() {
+		TestDao dao = mock(TestDao.class);
+		when(dao.getModelClass()).thenReturn(TestModel.class);
+		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+		
+		Long id = 12345L;
+		Long version = 4567L;
+		TestModel candidate = new TestModel();
+		candidate.setVersion(version);
+		when(dao.get(id)).thenReturn(candidate);
+		
+		service.get(id, version);
 	}
 
 	@Test(expected = ConflictException.class)
@@ -170,6 +185,25 @@ public class AbstractServiceTest {
 		verify(dao, times(1)).save(any(TestModel.class));
 	}
 
+	@Test(expected = ConflictException.class)
+	public void testUpdateWithWrongVersion() {
+		TestDao dao = mock(TestDao.class);
+		when(dao.getModelClass()).thenReturn(TestModel.class);
+		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+		
+		Long id = 12345L;
+		Long version = 4567L;
+		TestModel original = new TestModel();
+		original.setId(id);
+		original.setVersion(version + 1); // Stored version is older than the proposed version
+		when(dao.get(id)).thenReturn(original);
+		TestModel candidate = new TestModel();
+		candidate.setId(id);
+		candidate.setVersion(version);
+		
+		service.update(id, version, candidate);
+	}
+
 	@Test(expected = NotModifiedException.class)
 	public void testUpdateWithoutModification() {
 		TestDao dao = mock(TestDao.class);
@@ -177,13 +211,16 @@ public class AbstractServiceTest {
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
 		Long id = 12345L;
+		Long version = 4567L;
 		TestModel original = new TestModel();
 		original.setId(id);
+		original.setVersion(version);
 		TestModel candidate = new TestModel();
 		candidate.setId(id);
+		candidate.setVersion(version);
 		when(dao.get(id)).thenReturn(candidate);
 		
-		service.update(id, candidate);
+		service.update(id, version, candidate);
 	}
 
 	@Test
@@ -193,8 +230,10 @@ public class AbstractServiceTest {
 		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 		
 		Long id = 12345L;
+		Long version = 4567L;
 		TestModel original = new TestModel();
 		original.setId(id);
+		original.setVersion(version);
 		original.setTest("original");
 		TestModel candidate = new TestModel();
 		candidate.setId(id);
@@ -204,7 +243,7 @@ public class AbstractServiceTest {
 		when(key.getId()).thenReturn(id);
 		when(dao.get(id)).thenReturn(candidate);
 		
-		assertEquals(candidate, service.update(original, candidate));
+		assertEquals(candidate, service.update(original, version, candidate));
 		verify(dao, times(1)).save(original);
 		verify(dao, times(1)).save(any(TestModel.class));
 		verify(key, times(1)).getId();
@@ -220,7 +259,7 @@ public class AbstractServiceTest {
 		Long id = 12345L;
 		when(dao.get(id)).thenReturn(new TestModel());
 		
-		service.delete(id);
+		service.delete(id, 0L);
 		verify(dao, times(1)).get(id);
 		verify(dao, times(1)).get(anyLong());
 		verify(dao, times(1)).delete(id);

@@ -16,8 +16,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,31 +50,46 @@ public class UserResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public User get(@PathParam("id") Long id) {
-        return service.get(id);
+        return service.get(id, 0L);
+    }
+
+    @GET
+    @Path("/{id:\\d+}/{version:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getVersioned(@PathParam("id") Long id, @PathParam("version") long version) {
+        return service.get(id, version);
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response createForIdOnly(User entity, @Context UriInfo uriInfo) throws URISyntaxException {
+        Key<AbstractBase<User>> key = service.create(entity);
+        return Response.status(201).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(User entity) throws URISyntaxException {
+    public Response createForIdAndEntity(User entity, @Context UriInfo uriInfo) throws URISyntaxException {
         Key<AbstractBase<User>> key = service.create(entity);
-        return Response.status(201).entity(get(key.getId())).location(new URI("/api/user/" + key.getId())).build();
+        return Response.status(201).entity(get(key.getId())).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id:\\d+}/{version:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User update(@PathParam("id") Long id, User entity) {
-        return service.update(id, entity);
+    public User update(@PathParam("id") Long id, @PathParam("version") long version, User entity) {
+        return service.update(id, version, entity);
     }
 
     @DELETE
-    @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        service.delete(id);
+    @Path("/{id:\\d+}/{version:\\d+}")
+    public void delete(@PathParam("id") Long id, @PathParam("version") long version) {
+        service.delete(id, version);
     }
 }

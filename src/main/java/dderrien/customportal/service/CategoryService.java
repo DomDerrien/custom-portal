@@ -32,7 +32,7 @@ public class CategoryService extends AbstractAuthService<Category> {
     }
     
     @Override
-    public Category update(Category existing, Category entity) {
+    public Category update(Category existing, Long version, Category entity) {
         
         // Special case of the category order update => other categories should be shifted accordingly
         if (entity.getOrder() != null) {
@@ -55,7 +55,7 @@ public class CategoryService extends AbstractAuthService<Category> {
 	                            if (entityOrder <= categoryOrder && categoryOrder < existingOrder) {
 	                                Category clone = (Category) category.clone();
 	                                clone.setOrder(categoryOrder + 1);
-	                                super.update(category, clone);
+	                                super.update(category, version, clone);
 	                            }
 	                        }
 	                        else {
@@ -63,7 +63,7 @@ public class CategoryService extends AbstractAuthService<Category> {
 	                            if (existingOrder < categoryOrder && categoryOrder <= entityOrder) {
 	                                Category clone = (Category) category.clone();
 	                                clone.setOrder(categoryOrder - 1);
-	                                super.update(category, clone);
+	                                super.update(category, version, clone);
 	                            }
 	                        }
 	                    }
@@ -76,6 +76,6 @@ public class CategoryService extends AbstractAuthService<Category> {
         }
         
         // Just the normal update
-        return super.update(existing, entity);
+        return super.update(existing, version, entity);
     }
 }

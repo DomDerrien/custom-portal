@@ -30,6 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -124,11 +125,26 @@ public class UserResourceTest {
 		
 		final Long id = 12345L;
 		final User candidate = new User();
-		when(service.get(id)).thenReturn(candidate);
+		when(service.get(id, 0L)).thenReturn(candidate);
 		
 		assertEquals(candidate, resource.get(id));
-		verify(service, times(1)).get(id);
-		verify(service, times(1)).get(anyLong());
+		verify(service, times(1)).get(id, 0L);
+		verify(service, times(1)).get(anyLong(), anyLong());
+	}
+
+	@Test
+	public void testGetVersioned() {
+		UserService service = mock(UserService.class);
+		UserResource resource = new UserResource(service);
+		
+		final Long id = 12345L;
+		final User candidate = new User();
+		final Long version = 4567L;
+		when(service.get(id, version)).thenReturn(candidate);
+		
+		assertEquals(candidate, resource.getVersioned(id, version));
+		verify(service, times(1)).get(id, version);
+		verify(service, times(1)).get(anyLong(), anyLong());
 	}
 
 	@Test
@@ -151,10 +167,41 @@ public class UserResourceTest {
 		// @Get
 		int adx = 0; // annotation index
 		assertEquals(GET.class, annotations[adx].annotationType());
-		// @Path("/id")
+		// @Path("/{id:\\d+}")
 		adx++;
 		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id}", ((Path) annotations[adx]).value());
+		assertEquals("/{id:\\d+}", ((Path) annotations[adx]).value());
+		// @Produces(MediaType.APPLICATION_JSON)
+		adx++;
+		assertEquals(Produces.class, annotations[adx].annotationType());
+		assertEquals(1, ((Produces) annotations[adx]).value().length);
+		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+	}
+
+	@Test
+	public void testGetVersionedAnnotations() {
+		int annotationNb = 3;
+		String methodName = "getVersioned";
+		Class<UserResource> candidate = UserResource.class;
+
+		Method method = null;
+		for (Method m : candidate.getDeclaredMethods()) {
+			if (methodName.equals(m.getName()))
+				method = m;
+		}
+		if (method == null)
+			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+
+		Annotation[] annotations = method.getAnnotations();
+		assertEquals(annotationNb, annotations.length);
+
+		// @Get
+		int adx = 0; // annotation index
+		assertEquals(GET.class, annotations[adx].annotationType());
+		// @Path("/{id:\\d+}")
+		adx++;
+		assertEquals(Path.class, annotations[adx].annotationType());
+		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
 		// @Produces(MediaType.APPLICATION_JSON)
 		adx++;
 		assertEquals(Produces.class, annotations[adx].annotationType());
@@ -164,7 +211,7 @@ public class UserResourceTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void testCreate() throws URISyntaxException {
+	public void testCreateIdOnly() throws URISyntaxException {
 		UserService service = mock(UserService.class);
 		UserResource resource = new UserResource(service);
 		
@@ -173,18 +220,77 @@ public class UserResourceTest {
 		Key<AbstractBase<User>> storeKey = mock(Key.class);
 		when(service.create(candidate)).thenReturn(storeKey);
 		when(storeKey.getId()).thenReturn(id);
-		
-		Response response = resource.create(candidate);
+
+		String relativePath = "/api/user/";
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getPath()).thenReturn(relativePath);
+
+		Response response = resource.createForIdOnly(candidate, uriInfo);
 		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-		assertEquals("/api/user/" + id, ((URI) response.getLocation()).toString());
+		assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
 		verify(service, times(1)).create(candidate);
 		verify(service, times(1)).create(any(User.class));
 	}
 
 	@Test
-	public void testCreateAnnotations() {
+	@SuppressWarnings("unchecked")
+	public void testCreateIdEntity() throws URISyntaxException {
+		UserService service = mock(UserService.class);
+		UserResource resource = new UserResource(service);
+		
+		final Long id = 12345L;
+		final User candidate = new User();
+		Key<AbstractBase<User>> storeKey = mock(Key.class);
+		when(service.create(candidate)).thenReturn(storeKey);
+		when(storeKey.getId()).thenReturn(id);
+
+		String relativePath = "/api/user/";
+		UriInfo uriInfo = mock(UriInfo.class);
+		when(uriInfo.getPath()).thenReturn(relativePath);
+
+		Response response = resource.createForIdAndEntity(candidate, uriInfo);
+		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+		assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
+		verify(service, times(1)).create(candidate);
+		verify(service, times(1)).create(any(User.class));
+	}
+
+	@Test
+	public void testCreateIdOnlyAnnotations() {
 		int annotationNb = 3;
-		String methodName = "create";
+		String methodName = "createForIdOnly";
+		Class<UserResource> candidate = UserResource.class;
+
+		Method method = null;
+		for (Method m : candidate.getDeclaredMethods()) {
+			if (methodName.equals(m.getName()))
+				method = m;
+		}
+		if (method == null)
+			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+
+		Annotation[] annotations = method.getAnnotations();
+		assertEquals(annotationNb, annotations.length);
+
+		// @Post
+		int adx = 0; // annotation index
+		assertEquals(POST.class, annotations[adx].annotationType());
+		// @Consumes(MediaType.APPLICATION_JSON})
+		adx++;
+		assertEquals(Consumes.class, annotations[adx].annotationType());
+		assertEquals(1, ((Consumes) annotations[adx]).value().length);
+		assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
+		// @Produces(MediaType.TEXT_PLAIN)
+		adx++;
+		assertEquals(Produces.class, annotations[adx].annotationType());
+		assertEquals(1, ((Produces) annotations[adx]).value().length);
+		assertEquals(MediaType.TEXT_PLAIN, ((Produces) annotations[adx]).value()[0]);
+	}
+
+	@Test
+	public void testCreateIdEntityAnnotations() {
+		int annotationNb = 3;
+		String methodName = "createForIdAndEntity";
 		Class<UserResource> candidate = UserResource.class;
 
 		Method method = null;
@@ -219,12 +325,13 @@ public class UserResourceTest {
 		UserResource resource = new UserResource(service);
 		
 		final Long id = 12345L;
+		final Long version = 4567L;
 		final User candidate = new User();
-		when(service.update(id, candidate)).thenReturn(candidate);
+		when(service.update(id, version, candidate)).thenReturn(candidate);
 
-		assertEquals(candidate, resource.update(id, candidate));
-		verify(service, times(1)).update(id, candidate);
-		verify(service, times(1)).update(anyLong(), any(User.class));
+		assertEquals(candidate, resource.update(id, version, candidate));
+		verify(service, times(1)).update(id, version, candidate);
+		verify(service, times(1)).update(anyLong(), anyLong(), any(User.class));
 	}
 
 	@Test
@@ -247,10 +354,10 @@ public class UserResourceTest {
 		// @Put
 		int adx = 0; // annotation index
 		assertEquals(PUT.class, annotations[adx].annotationType());
-		// @Path("/id")
+		// @Path("/{id:\\d+}/{version:\\d+}")
 		adx++;
 		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id}", ((Path) annotations[adx]).value());
+		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
 		// @Consumes(MediaType.APPLICATION_JSON})
 		adx++;
 		assertEquals(Consumes.class, annotations[adx].annotationType());
@@ -269,10 +376,11 @@ public class UserResourceTest {
 		UserResource resource = new UserResource(service);
 		
 		final Long id = 12345L;
+		final Long version = 4567L;
 
-		resource.delete(id);
-		verify(service, times(1)).delete(id);
-		verify(service, times(1)).delete(anyLong());
+		resource.delete(id, version);
+		verify(service, times(1)).delete(id, version);
+		verify(service, times(1)).delete(anyLong(), anyLong());
 	}
 
 	@Test
@@ -295,9 +403,9 @@ public class UserResourceTest {
 		// @Delete
 		int adx = 0; // annotation index
 		assertEquals(DELETE.class, annotations[adx].annotationType());
-		// @Path("/id")
+		// @Path("/{id:\\d+}/{version:\\d+}")
 		adx++;
 		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id}", ((Path) annotations[adx]).value());
+		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
 	}
 }

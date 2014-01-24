@@ -16,8 +16,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.googlecode.objectify.Key;
 
@@ -49,31 +51,46 @@ public class LinkResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Link get(@PathParam("id") Long id) {
-        return service.get(id);
+        return service.get(id, 0L);
+    }
+
+    @GET
+    @Path("/{id:\\d+}/{version:\\d+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Link getVersioned(@PathParam("id") Long id, @PathParam("version") Long version) {
+        return service.get(id, version);
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response createForIdOnly(Link entity, @Context UriInfo uriInfo) throws URISyntaxException {
+        Key<AbstractBase<Link>> key = service.create(entity);
+        return Response.status(201).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Link entity) throws URISyntaxException {
+    public Response createForIdAndEntity(Link entity, @Context UriInfo uriInfo) throws URISyntaxException {
         Key<AbstractBase<Link>> key = service.create(entity);
-        return Response.status(201).entity(get(key.getId())).location(new URI("/api/link/" + key.getId())).build();
+        return Response.status(201).entity(get(key.getId())).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id:\\d+}/{version:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Link update(@PathParam("id") Long id, Link entity) {
-        return service.update(id, entity);
+    public Link update(@PathParam("id") Long id, @PathParam("version") Long version, Link entity) {
+        return service.update(id, version, entity);
     }
 
     @DELETE
-    @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        service.delete(id);
+    @Path("/{id:\\d+}/{version:\\d+}")
+    public void delete(@PathParam("id") Long id, @PathParam("version") Long version) {
+        service.delete(id, version);
     }
 }

@@ -97,8 +97,10 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 		
 		Long id = 12345L;
+		final Long version = 4567L;
 		Category existing = new Category();
 		existing.setId(id);
+		existing.setVersion(version);
 		existing.setTitle("existing");
 		Category entity = new Category();
 		entity.setId(id);
@@ -108,7 +110,7 @@ public class CategoryServiceTest {
 		when(key.getId()).thenReturn(id);
 		when(dao.get(id)).thenReturn(entity);
 		
-		assertEquals(entity, service.update(existing, entity));
+		assertEquals(entity, service.update(existing, version, entity));
 	}
 
 	@Test
@@ -121,9 +123,11 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 		
 		Long id = 12345L;
+		final Long version = 4567L;
 		Long order = 1L; // Second position
 		Category existing = new Category();
 		existing.setId(id);
+		existing.setVersion(version);
 		existing.setTitle("existing");
 		existing.setOrder(order);
 		Category entity = new Category();
@@ -135,12 +139,13 @@ public class CategoryServiceTest {
 		when(key.getId()).thenReturn(id);
 		when(dao.get(id)).thenReturn(entity);
 		
-		assertEquals(entity, service.update(existing, entity));
+		assertEquals(entity, service.update(existing, version, entity));
 	}
 
-	private static Category createCandidate(Long id, Long order) {
+	private static Category createCandidate(Long id, Long version, Long order) {
 		Category out = new Category();
 		out.setId(id);
+		out.setVersion(version);
 		out.setOrder(order);
 		return out;
 	}
@@ -155,9 +160,10 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		Long id = 12345L;
-		Category existing = createCandidate(id, null);
-		Category _1 = createCandidate(1L, 1L);
-		Category _2 = createCandidate(2L, 2L);
+		final Long version = 4567L;
+		Category existing = createCandidate(id, version, null);
+		Category _1 = createCandidate(1L, version, 1L);
+		Category _2 = createCandidate(2L, version, 2L);
 		List<Category> selection = Arrays.asList(new Category[] { existing, _1, _2 });
 		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
 
@@ -165,9 +171,9 @@ public class CategoryServiceTest {
 		when(dao.save(any(Category.class))).thenReturn(key);
 		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
 
-		Category update = createCandidate(id, 2L);
+		Category update = createCandidate(id, version, 2L);
 		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, update));
+		assertEquals(update, service.update(existing, version, update));
 		verify(dao, times(3)).get(anyLong());
 		verify(dao, times(1)).save(_1);
 		verify(dao, times(1)).save(_2);
@@ -184,11 +190,12 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		Long id = 12345L;
-		Category _0 = createCandidate(0L, 0L);
-		Category existing = createCandidate(id, 1L);
-		Category _2 = createCandidate(2L, 2L);
-		Category _3 = createCandidate(3L, 3L);
-		Category _4 = createCandidate(4L, 4L);
+		final Long version = 4567L;
+		Category _0 = createCandidate(0L, version, 0L);
+		Category existing = createCandidate(id, version, 1L);
+		Category _2 = createCandidate(2L, version, 2L);
+		Category _3 = createCandidate(3L, version, 3L);
+		Category _4 = createCandidate(4L, version, 4L);
 		List<Category> selection = Arrays.asList(new Category[] { _0, existing, _2, _3, _4 });
 		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
 
@@ -196,9 +203,9 @@ public class CategoryServiceTest {
 		when(dao.save(any(Category.class))).thenReturn(key);
 		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
 
-		Category update = createCandidate(id, 3L);
+		Category update = createCandidate(id, version, 3L);
 		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, update));
+		assertEquals(update, service.update(existing, version, update));
 		verify(dao, times(3)).get(anyLong());
 		verify(dao, times(0)).save(_0);
 		verify(dao, times(1)).save(_2);
@@ -218,9 +225,10 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		Long id = 12345L;
-		Category _0 = createCandidate(0L, 0L);
-		Category _1 = createCandidate(1L, 1L);
-		Category existing = createCandidate(id, 2L);
+		final Long version = 4567L;
+		Category _0 = createCandidate(0L, version, 0L);
+		Category _1 = createCandidate(1L, version, 1L);
+		Category existing = createCandidate(id, version, 2L);
 		List<Category> selection = Arrays.asList(new Category[] { _0, _1, existing });
 		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
 
@@ -228,9 +236,9 @@ public class CategoryServiceTest {
 		when(dao.save(any(Category.class))).thenReturn(key);
 		when(key.getId()).thenReturn(0L).thenReturn(1L).thenReturn(id);
 
-		Category update = createCandidate(id, 0L);
+		Category update = createCandidate(id, version, 0L);
 		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, update));
+		assertEquals(update, service.update(existing, version, update));
 		verify(dao, times(3)).get(anyLong());
 		verify(dao, times(1)).save(_0);
 		verify(dao, times(1)).save(_1);
@@ -247,12 +255,13 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
 		Long id = 12345L;
-		Category _null = createCandidate(-1L, null);
-		Category _0 = createCandidate(0L, 0L);
-		Category _1 = createCandidate(1L, 1L);
-		Category _2 = createCandidate(2L, 2L);
-		Category existing = createCandidate(id, 3L);
-		Category _4 = createCandidate(4L, 4L);
+		final Long version = 4567L;
+		Category _null = createCandidate(-1L, version, null);
+		Category _0 = createCandidate(0L, version, 0L);
+		Category _1 = createCandidate(1L, version, 1L);
+		Category _2 = createCandidate(2L, version, 2L);
+		Category existing = createCandidate(id, version, 3L);
+		Category _4 = createCandidate(4L, version, 4L);
 		List<Category> selection = Arrays.asList(new Category[] { _null, _0, _1, _2, existing, _4 });
 		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
 
@@ -260,9 +269,9 @@ public class CategoryServiceTest {
 		when(dao.save(any(Category.class))).thenReturn(key);
 		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
 
-		Category update = createCandidate(id, 1L);
+		Category update = createCandidate(id, version, 1L);
 		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, update));
+		assertEquals(update, service.update(existing, version, update));
 		verify(dao, times(3)).get(anyLong());
 		verify(dao, times(0)).save(_0);
 		verify(dao, times(1)).save(_1);
@@ -281,8 +290,9 @@ public class CategoryServiceTest {
 		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 		
 		Long id = 12345L;
-		Category existing = createCandidate(id, 1L);
-		Category update = createCandidate(id, 0L);
+		final Long version = 4567L;
+		Category existing = createCandidate(id, version, 1L);
+		Category update = createCandidate(id, version, 0L);
 		Category nonCloneable = new Category() {
 			@Override
 			public Category clone() throws CloneNotSupportedException {
@@ -297,6 +307,6 @@ public class CategoryServiceTest {
 		Key<AbstractBase<Category>> key = mock(Key.class);
 		when(dao.save(existing)).thenReturn(key);
 		
-		service.update(existing, update);
+		service.update(existing, version, update);
 	}
 }
