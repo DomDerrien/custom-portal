@@ -11,8 +11,7 @@
         <param-name>resteasy.guice.modules</param-name>
         <param-value>
         	dderrien.common.ModuleDefs,
-        	dderrien.customportal.ModuleDefs,
-        	dderrien.ipaddresscontrol.ModuleDefs
+        	dderrien.customportal.ModuleDefs
         </param-value>
     </context-param>
 

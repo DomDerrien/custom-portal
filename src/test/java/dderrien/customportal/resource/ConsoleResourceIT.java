@@ -101,6 +101,7 @@ public class ConsoleResourceIT {
 	// Fill up the category form and submit it
 	public static void createCategory(String title) {
 		driver.findElement(By.id("admin")).click();
+		waitForPageReady(true);
 		driver.findElement(By.id("addCat")).click();
 		
 		WebElement addCatForm = driver.findElement(By.id("addCatForm"));
@@ -112,9 +113,11 @@ public class ConsoleResourceIT {
 
 	// Trigger the deletion of all category items from the category contextual menu
 	public static void deleteAllCategories() {
+
 		List<WebElement> categories = driver.findElements(By.id("catCtxtMenu-0"));
 		while(categories.size() != 0) {
 			categories.get(0).click();
+			waitForPageReady(true);
 			driver.findElement(By.id("catDelete-0")).click();
 
 			waitForPageReady(true);
@@ -144,6 +147,7 @@ public class ConsoleResourceIT {
 	// Fill up the category form and submit it
 	public static void createLink(int catIdx, String title) {
 		driver.findElement(By.id("catCtxtMenu-" + catIdx)).click();
+		waitForPageReady(true);
 		driver.findElement(By.id("catAddLink-" + catIdx)).click();
 		
 		WebElement addLinkForm = driver.findElement(By.id("addLnkForm"));
@@ -195,6 +199,7 @@ public class ConsoleResourceIT {
 	
 			// Update the width to the largest one
 			driver.findElement(By.id("catCtxtMenu-0")).click();
+			waitForPageReady(true);
 			driver.findElement(By.id("setCatWidth-0")).click();
 			
 			WebElement setCatWidthForm = driver.findElement(By.id("setCatWidthForm"));
@@ -214,7 +219,7 @@ public class ConsoleResourceIT {
 	}
 
 	@Test
-	public void testCreateSwapDeleteTwoCategories() throws InterruptedException {
+	public void testCreateSwapDeleteCategories() throws InterruptedException {
 
 		createCategory("first"); // idx: 0
 		createCategory("middle"); // idx: 1
@@ -228,6 +233,7 @@ public class ConsoleResourceIT {
 	
 			// Update the position of the first category to be the last one, others will shift
 			driver.findElement(By.id("catCtxtMenu-0")).click();
+			waitForPageReady(true);
 			driver.findElement(By.id("setCatOrder-0")).click();
 			
 			WebElement setCatOrderForm = driver.findElement(By.id("setCatOrderForm"));

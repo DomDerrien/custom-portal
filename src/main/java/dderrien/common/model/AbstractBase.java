@@ -152,11 +152,11 @@ public abstract class AbstractBase<T> implements Cloneable {
     }
 
     @OnSave
-    protected void prePersist() {
+    protected void setCreationAndVersion() {
         if (creation == null) {
             creation = new DateTime().toDate();
-            version = 1L;
+            version = Long.valueOf(0l);
         }
-        version += 1L;
+        version ++;
     }
 }

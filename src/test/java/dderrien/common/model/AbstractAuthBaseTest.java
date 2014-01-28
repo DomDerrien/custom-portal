@@ -27,20 +27,20 @@ public class AbstractAuthBaseTest {
 
 	@Test(expected = ClientErrorException.class)
 	public void testPrePersistWithoutOwnerId() {
-		new TestModel().prePersist();
+		new TestModel().checkOwnerId();
 	}
 
 	@Test(expected = ClientErrorException.class)
 	public void testPrePersistWithZeroOwnerId() {
 		TestModel entity = new TestModel();
 		entity.setOwnerId(0L);
-		entity.prePersist();
+		entity.checkOwnerId();
 	}
 
 	@Test
 	public void testPrePersistValid() {
 		TestModel entity = new TestModel();
 		entity.setOwnerId(12345L);
-		entity.prePersist();
+		entity.checkOwnerId();
 	}
 }

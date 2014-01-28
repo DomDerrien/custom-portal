@@ -190,13 +190,13 @@ public class AbstractBaseTest {
 		Long version1 = entity.getVersion();
 		assertNull(version1);
 		
-		entity.prePersist();
+		entity.setCreationAndVersion();
 		Date creation2 = entity.getCreation();
 		assertNotNull(creation2);
 		Long version2 = entity.getVersion();
 		assertNotNull(version2);
 
-		entity.prePersist();
+		entity.setCreationAndVersion();
 		Date creation3 = entity.getCreation();
 		assertNotNull(creation3);
 		assertEquals(creation2, creation3);

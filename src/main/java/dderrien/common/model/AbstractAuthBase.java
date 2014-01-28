@@ -24,7 +24,7 @@ public abstract class AbstractAuthBase<T> extends AbstractBase<T> {
     }
 
     @OnSave
-    protected void prePersist() {
+    protected void checkOwnerId() {
         if (ownerId == null || Long.valueOf(0L).equals(ownerId)) {
             throw new ClientErrorException("Field ownerId is missing");
         }

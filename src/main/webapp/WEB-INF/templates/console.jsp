@@ -163,6 +163,7 @@
     	<form id="setCatTitleForm" data-dojo-type="dijit/form/Form">
 	        <div class="dijitDialogPaneContentArea">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="id" id="setCatTitleId">
+	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="version" id="setCatTitleVersion">
 		        <div style="text-align: right; margin-bottom: 10px;">
 		        	<label>Ancien titre :</label>
 		        	<input data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="required: true" readonly="readonly" id="setCatTitleOld"/>
@@ -184,6 +185,7 @@
     	<form id="setCatWidthForm" data-dojo-type="dijit/form/Form">
 	        <div class="dijitDialogPaneContentArea">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="id" id="setCatWidthId">
+	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="version" id="setCatWidthVersion">
 		        <div style="text-align: right;">
 		        	<label for="setCatWidth">Choix de largeur :</label>
 		        	<select data-dojo-type="dijit/form/Select" data-dojo-props="required: true" style="width: 15.1em" id="setCatWidth" name="width">
@@ -209,6 +211,7 @@
     	<form id="setCatOrderForm" data-dojo-type="dijit/form/Form">
 	        <div class="dijitDialogPaneContentArea">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="id" id="setCatOrderId">
+	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="version" id="setCatOrderVersion">
 	            <input data-dojo-type="dijit/form/TextBox" data-dojo-props="required: true" type="hidden" name="oldOrder" id="setCatOrderOld">
 		        <div style="text-align: right;">
 		        	<label for="setCatOrder">Choix de position :</label>

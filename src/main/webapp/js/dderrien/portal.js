@@ -67,6 +67,12 @@ define(
             // summary:
             //   Returns an instance of an observable JSON REST store with a caching capability
 
+            return new JsonRest({
+                target: '/api/' + entityName + '/',
+                idProperty: 'id',
+                accepts: 'application/json, text/plain'
+            });
+
             return Observable(new Cache( /* because JSHint complains about a missing 'new' */ // jshint ignore:line
                 new JsonRest({
                     target: '/api/' + entityName + '/',
@@ -129,6 +135,7 @@ define(
                     label: 'Renommer',
                     onClick: function() {
                         registry.byId('setCatTitleId').set('value', category.id);
+                        registry.byId('setCatTitleVersion').set('value', category.version);
                         registry.byId('setCatTitleOld').set('value', category.title);
                         registry.byId('setCatTitleDlg').show();
                     }
@@ -137,7 +144,7 @@ define(
                     id: 'catDelete-' + idx,
                     label: 'Retirer',
                     onClick: function() {
-                        _categoryStore.remove(category.id).then(
+                        _categoryStore.remove(category.id + '/' + category.version).then(
                             function() {
                                 window.location.reload();
                             },
@@ -162,6 +169,7 @@ define(
                     label: 'Changer la largeur',
                     onClick: function() {
                         registry.byId('setCatWidthId').set('value', category.id);
+                        registry.byId('setCatWidthVersion').set('value', category.version);
                         registry.byId('setCatWidth').set('value', category.width === null ? 'span2' : category.width);
                         registry.byId('setCatWidthDlg').show();
                     }
@@ -187,6 +195,7 @@ define(
                             });
                         }
                         registry.byId('setCatOrderId').set('value', category.id);
+                        registry.byId('setCatOrderVersion').set('value', category.version);
                         registry.byId('setCatOrderOld').set('value', category.order === null ? ' ' : category.order);
                         registry.byId('setCatOrder').set('value', category.order === null ? ' ' : '' + category.order); // Be careful: value MUST be a string
                         registry.byId('setCatOrderDlg').show();
@@ -230,7 +239,7 @@ define(
                 ref = ref; // To prevent jshint complaining about unused variable, will be remove by JavaScript compiler
 
                 dojo.connect(span, 'onclick', function( /* evt */ ) {
-                    _linkStore.remove(link.id).then(
+                    _linkStore.remove(link.id + '/' + link.version).then(
                         function() {
                             window.location.reload();
                         },
@@ -257,7 +266,7 @@ define(
             });
 
             // To handle the user profile switch
-            if (users) {
+            if (users !== undefined && 1 < users.length) {
                 registry.byId('userList').on('change', function(value) {
                     if (currentUser.id !== parseInt(value)) {
                         var href = window.location.href,
@@ -335,7 +344,9 @@ define(
                 var candidate = form.get('value');
                 candidate.ownerId = currentUser.id;
 
-                _categoryStore.put(candidate).then(
+                _categoryStore.put(candidate, {
+                    id: candidate.id + '/' + candidate.version
+                }).then(
                     function() {
                         window.location.reload();
                     },
@@ -362,7 +373,9 @@ define(
                 var candidate = form.get('value');
                 candidate.ownerId = currentUser.id;
 
-                _categoryStore.put(candidate).then(
+                _categoryStore.put(candidate, {
+                    id: candidate.id + '/' + candidate.version
+                }).then(
                     function() {
                         window.location.reload();
                     },
@@ -394,7 +407,9 @@ define(
                 delete candidate.oldOrder;
                 candidate.ownerId = currentUser.id;
 
-                _categoryStore.put(candidate).then(
+                _categoryStore.put(candidate, {
+                    id: candidate.id + '/' + candidate.version
+                }).then(
                     function() {
                         window.location.reload();
                     },
