@@ -45,391 +45,391 @@ import dderrien.customportal.service.LinkService;
 
 public class LinkResourceTest {
 
-	@Test
-	public void testConstructor() {
-		new LinkResource(mock(LinkService.class));
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectAll() {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final ArrayList<Link> selection = new ArrayList<Link>();
-		doAnswer(new Answer<List<Link>>() {
-			@Override
-			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
-				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
-				assertEquals(0, filters.size());
-				return selection;
-			}
-		}).when(service).select(anyMap(), any(Range.class), anyList());
-		
-		assertEquals(selection, resource.select(null, null));
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectByOnwerIdAndCategoryId() {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long ownerId = 1234L;
-		final Long categoryId = 5678L;
-		final ArrayList<Link> selection = new ArrayList<Link>();
-		doAnswer(new Answer<List<Link>>() {
-			@Override
-			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
-				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
-				assertEquals(2, filters.size());
-				assertEquals(ownerId, filters.get("ownerId"));
-				assertEquals(categoryId, filters.get("categoryId"));
-				return selection;
-			}
-		}).when(service).select(anyMap(), any(Range.class), anyList());
-		
-		assertEquals(selection, resource.select(ownerId, categoryId));
-		verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectByWrongOnwerIdAndWrongCategoryId() {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long ownerId = 0L;
-		final Long categoryId = 0L;
-		final ArrayList<Link> selection = new ArrayList<Link>();
-		doAnswer(new Answer<List<Link>>() {
-			@Override
-			public List<Link> answer(InvocationOnMock invocation) throws Throwable {
-				Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
-				assertEquals(0, filters.size());
-				return selection;
-			}
-		}).when(service).select(anyMap(), any(Range.class), anyList());
-		
-		assertEquals(selection, resource.select(ownerId, categoryId));
-		verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
+    @Test
+    public void testConstructor() {
+        new LinkResource(mock(LinkService.class));
+    }
 
-	@Test
-	public void testSelectAnnotations() {
-		int annotationNb = 2;
-		String methodName = "select";
-		Class<LinkResource> candidate = LinkResource.class;
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectAll() {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+        final ArrayList<Link> selection = new ArrayList<Link>();
+        doAnswer(new Answer<List<Link>>() {
+            @Override
+            public List<Link> answer(InvocationOnMock invocation) throws Throwable {
+                Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
+                assertEquals(0, filters.size());
+                return selection;
+            }
+        }).when(service).select(anyMap(), any(Range.class), anyList());
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        assertEquals(selection, resource.select(null, null));
+    }
 
-		// @Get
-		int adx = 0; // annotation index
-		assertEquals(GET.class, annotations[adx].annotationType());
-		// @Produces(MediaType.APPLICATION_JSON)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectByOnwerIdAndCategoryId() {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-	@Test
-	public void testGet() {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Link candidate = new Link();
-		when(service.get(id, 0L)).thenReturn(candidate);
-		
-		assertEquals(candidate, resource.get(id));
-		verify(service, times(1)).get(id, 0L);
-		verify(service, times(1)).get(anyLong(), anyLong());
-	}
+        final Long ownerId = 1234L;
+        final Long categoryId = 5678L;
+        final ArrayList<Link> selection = new ArrayList<Link>();
+        doAnswer(new Answer<List<Link>>() {
+            @Override
+            public List<Link> answer(InvocationOnMock invocation) throws Throwable {
+                Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
+                assertEquals(2, filters.size());
+                assertEquals(ownerId, filters.get("ownerId"));
+                assertEquals(categoryId, filters.get("categoryId"));
+                return selection;
+            }
+        }).when(service).select(anyMap(), any(Range.class), anyList());
 
-	@Test
-	public void testGetVersioned() {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Long version = 4567L;
-		final Link candidate = new Link();
-		when(service.get(id, version)).thenReturn(candidate);
-		
-		assertEquals(candidate, resource.getVersioned(id, version));
-		verify(service, times(1)).get(id, version);
-		verify(service, times(1)).get(anyLong(), anyLong());
-	}
+        assertEquals(selection, resource.select(ownerId, categoryId));
+        verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-	@Test
-	public void testGetAnnotations() {
-		int annotationNb = 3;
-		String methodName = "get";
-		Class<LinkResource> candidate = LinkResource.class;
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectByWrongOnwerIdAndWrongCategoryId() {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+        final Long ownerId = 0L;
+        final Long categoryId = 0L;
+        final ArrayList<Link> selection = new ArrayList<Link>();
+        doAnswer(new Answer<List<Link>>() {
+            @Override
+            public List<Link> answer(InvocationOnMock invocation) throws Throwable {
+                Map<String, Object> filters = (Map<String, Object>) invocation.getArguments()[0];
+                assertEquals(0, filters.size());
+                return selection;
+            }
+        }).when(service).select(anyMap(), any(Range.class), anyList());
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        assertEquals(selection, resource.select(ownerId, categoryId));
+        verify(service, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-		// @Get
-		int adx = 0; // annotation index
-		assertEquals(GET.class, annotations[adx].annotationType());
-		// @Path("/{id:\\d+}")
-		adx++;
-		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id:\\d+}", ((Path) annotations[adx]).value());
-		// @Produces(MediaType.APPLICATION_JSON)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
-	}
+    @Test
+    public void testSelectAnnotations() {
+        int annotationNb = 2;
+        String methodName = "select";
+        Class<LinkResource> candidate = LinkResource.class;
 
-	@Test
-	public void testGetVersionedAnnotations() {
-		int annotationNb = 3;
-		String methodName = "getVersioned";
-		Class<LinkResource> candidate = LinkResource.class;
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        // @Get
+        int adx = 0; // annotation index
+        assertEquals(GET.class, annotations[adx].annotationType());
+        // @Produces(MediaType.APPLICATION_JSON)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+    }
 
-		// @Get
-		int adx = 0; // annotation index
-		assertEquals(GET.class, annotations[adx].annotationType());
-		// @Path("/{id:\\d+}")
-		adx++;
-		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
-		// @Produces(MediaType.APPLICATION_JSON)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
-	}
+    @Test
+    public void testGet() {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testCreateIdOnly() throws URISyntaxException {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Link candidate = new Link();
-		Key<AbstractBase<Link>> storeKey = mock(Key.class);
-		when(service.create(candidate)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(id);
-		
-		String relativePath = "/api/link/";
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getPath()).thenReturn(relativePath);
+        final Long id = 12345L;
+        final Link candidate = new Link();
+        when(service.get(id, 0L)).thenReturn(candidate);
 
-		Response response = resource.createForIdAndEntity(candidate, uriInfo);
-		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-		assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
-		verify(service, times(1)).create(candidate);
-		verify(service, times(1)).create(any(Link.class));
-	}
+        assertEquals(candidate, resource.get(id));
+        verify(service, times(1)).get(id, 0L);
+        verify(service, times(1)).get(anyLong(), anyLong());
+    }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testCreateIdAndEntity() throws URISyntaxException {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Link candidate = new Link();
-		Key<AbstractBase<Link>> storeKey = mock(Key.class);
-		when(service.create(candidate)).thenReturn(storeKey);
-		when(storeKey.getId()).thenReturn(id);
-		
-		String relativePath = "/api/link/";
-		UriInfo uriInfo = mock(UriInfo.class);
-		when(uriInfo.getPath()).thenReturn(relativePath);
+    @Test
+    public void testGetVersioned() {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-		Response response = resource.createForIdAndEntity(candidate, uriInfo);
-		assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-		assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
-		verify(service, times(1)).create(candidate);
-		verify(service, times(1)).create(any(Link.class));
-	}
+        final Long id = 12345L;
+        final Long version = 4567L;
+        final Link candidate = new Link();
+        when(service.get(id, version)).thenReturn(candidate);
 
-	@Test
-	public void testCreateIdOnlyAnnotations() {
-		int annotationNb = 3;
-		String methodName = "createForIdOnly";
-		Class<LinkResource> candidate = LinkResource.class;
+        assertEquals(candidate, resource.getVersioned(id, version));
+        verify(service, times(1)).get(id, version);
+        verify(service, times(1)).get(anyLong(), anyLong());
+    }
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+    @Test
+    public void testGetAnnotations() {
+        int annotationNb = 3;
+        String methodName = "get";
+        Class<LinkResource> candidate = LinkResource.class;
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
 
-		// @Post
-		int adx = 0; // annotation index
-		assertEquals(POST.class, annotations[adx].annotationType());
-		// @Consumes(MediaType.APPLICATION_JSON})
-		adx++;
-		assertEquals(Consumes.class, annotations[adx].annotationType());
-		assertEquals(1, ((Consumes) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
-		// @Produces(MediaType.TEXT_PLAIN)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.TEXT_PLAIN, ((Produces) annotations[adx]).value()[0]);
-	}
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
 
-	@Test
-	public void testCreateIdAndEntityAnnotations() {
-		int annotationNb = 3;
-		String methodName = "createForIdAndEntity";
-		Class<LinkResource> candidate = LinkResource.class;
+        // @Get
+        int adx = 0; // annotation index
+        assertEquals(GET.class, annotations[adx].annotationType());
+        // @Path("/{id:\\d+}")
+        adx++;
+        assertEquals(Path.class, annotations[adx].annotationType());
+        assertEquals("/{id:\\d+}", ((Path) annotations[adx]).value());
+        // @Produces(MediaType.APPLICATION_JSON)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+    }
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+    @Test
+    public void testGetVersionedAnnotations() {
+        int annotationNb = 3;
+        String methodName = "getVersioned";
+        Class<LinkResource> candidate = LinkResource.class;
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
 
-		// @Post
-		int adx = 0; // annotation index
-		assertEquals(POST.class, annotations[adx].annotationType());
-		// @Consumes(MediaType.APPLICATION_JSON})
-		adx++;
-		assertEquals(Consumes.class, annotations[adx].annotationType());
-		assertEquals(1, ((Consumes) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
-		// @Produces(MediaType.APPLICATION_JSON)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
-	}
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
 
-	@Test
-	public void testUpdate() throws URISyntaxException {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Long version = 4567L;
-		final Link candidate = new Link();
-		when(service.update(id, version, candidate)).thenReturn(candidate);
+        // @Get
+        int adx = 0; // annotation index
+        assertEquals(GET.class, annotations[adx].annotationType());
+        // @Path("/{id:\\d+}")
+        adx++;
+        assertEquals(Path.class, annotations[adx].annotationType());
+        assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
+        // @Produces(MediaType.APPLICATION_JSON)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+    }
 
-		assertEquals(candidate, resource.update(id, version, candidate));
-		verify(service, times(1)).update(id, version, candidate);
-		verify(service, times(1)).update(anyLong(), anyLong(), any(Link.class));
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testCreateIdOnly() throws URISyntaxException {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-	@Test
-	public void testUpdateAnnotations() {
-		int annotationNb = 4;
-		String methodName = "update";
-		Class<LinkResource> candidate = LinkResource.class;
+        final Long id = 12345L;
+        final Link candidate = new Link();
+        Key<AbstractBase<Link>> storeKey = mock(Key.class);
+        when(service.create(candidate)).thenReturn(storeKey);
+        when(storeKey.getId()).thenReturn(id);
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+        String relativePath = "/api/link/";
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getPath()).thenReturn(relativePath);
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        Response response = resource.createForIdAndEntity(candidate, uriInfo);
+        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
+        verify(service, times(1)).create(candidate);
+        verify(service, times(1)).create(any(Link.class));
+    }
 
-		// @Put
-		int adx = 0; // annotation index
-		assertEquals(PUT.class, annotations[adx].annotationType());
-		// @Path("/{id:\\d+}/{version:\\d+}")
-		adx++;
-		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
-		// @Consumes(MediaType.APPLICATION_JSON})
-		adx++;
-		assertEquals(Consumes.class, annotations[adx].annotationType());
-		assertEquals(1, ((Consumes) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
-		// @Produces(MediaType.APPLICATION_JSON)
-		adx++;
-		assertEquals(Produces.class, annotations[adx].annotationType());
-		assertEquals(1, ((Produces) annotations[adx]).value().length);
-		assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testCreateIdAndEntity() throws URISyntaxException {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
 
-	@Test
-	public void testDelete() throws URISyntaxException {
-		LinkService service = mock(LinkService.class);
-		LinkResource resource = new LinkResource(service);
-		
-		final Long id = 12345L;
-		final Long version = 4567L;
+        final Long id = 12345L;
+        final Link candidate = new Link();
+        Key<AbstractBase<Link>> storeKey = mock(Key.class);
+        when(service.create(candidate)).thenReturn(storeKey);
+        when(storeKey.getId()).thenReturn(id);
 
-		resource.delete(id, version);
-		verify(service, times(1)).delete(id, version);
-		verify(service, times(1)).delete(anyLong(), anyLong());
-	}
+        String relativePath = "/api/link/";
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getPath()).thenReturn(relativePath);
 
-	@Test
-	public void testDeleteAnnotations() {
-		int annotationNb = 2;
-		String methodName = "delete";
-		Class<LinkResource> candidate = LinkResource.class;
+        Response response = resource.createForIdAndEntity(candidate, uriInfo);
+        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(relativePath + id, ((URI) response.getLocation()).toString());
+        verify(service, times(1)).create(candidate);
+        verify(service, times(1)).create(any(Link.class));
+    }
 
-		Method method = null;
-		for (Method m : candidate.getDeclaredMethods()) {
-			if (methodName.equals(m.getName()))
-				method = m;
-		}
-		if (method == null)
-			fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+    @Test
+    public void testCreateIdOnlyAnnotations() {
+        int annotationNb = 3;
+        String methodName = "createForIdOnly";
+        Class<LinkResource> candidate = LinkResource.class;
 
-		Annotation[] annotations = method.getAnnotations();
-		assertEquals(annotationNb, annotations.length);
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
 
-		// @Delete
-		int adx = 0; // annotation index
-		assertEquals(DELETE.class, annotations[adx].annotationType());
-		// @Path("/{id:\\d+}/{version:\\d+}")
-		adx++;
-		assertEquals(Path.class, annotations[adx].annotationType());
-		assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
-	}
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
+
+        // @Post
+        int adx = 0; // annotation index
+        assertEquals(POST.class, annotations[adx].annotationType());
+        // @Consumes(MediaType.APPLICATION_JSON})
+        adx++;
+        assertEquals(Consumes.class, annotations[adx].annotationType());
+        assertEquals(1, ((Consumes) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
+        // @Produces(MediaType.TEXT_PLAIN)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.TEXT_PLAIN, ((Produces) annotations[adx]).value()[0]);
+    }
+
+    @Test
+    public void testCreateIdAndEntityAnnotations() {
+        int annotationNb = 3;
+        String methodName = "createForIdAndEntity";
+        Class<LinkResource> candidate = LinkResource.class;
+
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
+
+        // @Post
+        int adx = 0; // annotation index
+        assertEquals(POST.class, annotations[adx].annotationType());
+        // @Consumes(MediaType.APPLICATION_JSON})
+        adx++;
+        assertEquals(Consumes.class, annotations[adx].annotationType());
+        assertEquals(1, ((Consumes) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
+        // @Produces(MediaType.APPLICATION_JSON)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+    }
+
+    @Test
+    public void testUpdate() throws URISyntaxException {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
+
+        final Long id = 12345L;
+        final Long version = 4567L;
+        final Link candidate = new Link();
+        when(service.update(id, version, candidate)).thenReturn(candidate);
+
+        assertEquals(candidate, resource.update(id, version, candidate));
+        verify(service, times(1)).update(id, version, candidate);
+        verify(service, times(1)).update(anyLong(), anyLong(), any(Link.class));
+    }
+
+    @Test
+    public void testUpdateAnnotations() {
+        int annotationNb = 4;
+        String methodName = "update";
+        Class<LinkResource> candidate = LinkResource.class;
+
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
+
+        // @Put
+        int adx = 0; // annotation index
+        assertEquals(PUT.class, annotations[adx].annotationType());
+        // @Path("/{id:\\d+}/{version:\\d+}")
+        adx++;
+        assertEquals(Path.class, annotations[adx].annotationType());
+        assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
+        // @Consumes(MediaType.APPLICATION_JSON})
+        adx++;
+        assertEquals(Consumes.class, annotations[adx].annotationType());
+        assertEquals(1, ((Consumes) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Consumes) annotations[adx]).value()[0]);
+        // @Produces(MediaType.APPLICATION_JSON)
+        adx++;
+        assertEquals(Produces.class, annotations[adx].annotationType());
+        assertEquals(1, ((Produces) annotations[adx]).value().length);
+        assertEquals(MediaType.APPLICATION_JSON, ((Produces) annotations[adx]).value()[0]);
+    }
+
+    @Test
+    public void testDelete() throws URISyntaxException {
+        LinkService service = mock(LinkService.class);
+        LinkResource resource = new LinkResource(service);
+
+        final Long id = 12345L;
+        final Long version = 4567L;
+
+        resource.delete(id, version);
+        verify(service, times(1)).delete(id, version);
+        verify(service, times(1)).delete(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDeleteAnnotations() {
+        int annotationNb = 2;
+        String methodName = "delete";
+        Class<LinkResource> candidate = LinkResource.class;
+
+        Method method = null;
+        for (Method m : candidate.getDeclaredMethods()) {
+            if (methodName.equals(m.getName()))
+                method = m;
+        }
+        if (method == null)
+            fail("Method '" + methodName + "()' has not been found in class " + candidate.getCanonicalName());
+
+        Annotation[] annotations = method.getAnnotations();
+        assertEquals(annotationNb, annotations.length);
+
+        // @Delete
+        int adx = 0; // annotation index
+        assertEquals(DELETE.class, annotations[adx].annotationType());
+        // @Path("/{id:\\d+}/{version:\\d+}")
+        adx++;
+        assertEquals(Path.class, annotations[adx].annotationType());
+        assertEquals("/{id:\\d+}/{version:\\d+}", ((Path) annotations[adx]).value());
+    }
 }

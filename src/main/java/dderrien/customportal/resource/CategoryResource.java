@@ -31,12 +31,12 @@ import dderrien.customportal.service.CategoryService;
 public class CategoryResource {
 
     private CategoryService service;
-    
+
     @Inject
     public CategoryResource(CategoryService service) {
         this.service = service;
     }
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Category> select(@QueryParam("ownerId") Long ownerId) {

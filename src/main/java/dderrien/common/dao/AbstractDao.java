@@ -73,7 +73,7 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
             if (value == null) {
                 continue;
             }
-            
+
             if (value instanceof String) {
                 String stringValue = (String) value;
                 if (stringValue.length() == 0) {
@@ -101,7 +101,7 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
                 }
                 valueProcessed = true;
             }
-            
+
             if (!valueProcessed) {
                 if (noOperatorPattern.matcher(key).matches()) {
                     key = key + " = "; // required for Objectify 4 otherwise defaults to == which yields strange results
@@ -116,7 +116,7 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
         }
 
         if (orders != null && 0 < orders.size()) {
-            for(String order: orders) {
+            for (String order : orders) {
                 if (order.charAt(0) == '+') {
                     query = query.order(order.substring(1));
                 }
@@ -147,17 +147,17 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
         getOfy().delete().type(getModelClass()).id(id).now();
     }
 
-    ///=========================
-    
+    // =========================
+
     protected LoadType<T> getQuery(Class<T> modelClass) {
         return getOfy().load().type(modelClass);
     }
 
     protected Query<T> applyRange(Query<T> query, Range range) {
-    	// Get the total number of matching entity keys
+        // Get the total number of matching entity keys
         int total = query.keys().list().size();
         int startRow = range.getStartRow();
-    	if (startRow > 0 && startRow > total - 1) {
+        if (startRow > 0 && startRow > total - 1) {
             throw new InvalidRangeException("range header mal formed for scrolling : result set shorter than expected");
         }
         range.setTotal(total);
@@ -165,7 +165,7 @@ public abstract class AbstractDao<T extends AbstractBase<T>> {
         // Specify request boundaries
         query = query.offset(startRow);
         Integer count = range.getCount();
-		if (count != null) {
+        if (count != null) {
             query = query.limit(count);
         }
 

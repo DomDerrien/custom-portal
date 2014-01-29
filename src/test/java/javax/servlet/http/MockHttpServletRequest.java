@@ -226,13 +226,10 @@ public class MockHttpServletRequest implements HttpServletRequest {
         return false;
     }
 
-    public void removeAttribute(String arg0) {
-    }
+    public void removeAttribute(String arg0) {}
 
-    public void setAttribute(String arg0, Object arg1) {
-    }
+    public void setAttribute(String arg0, Object arg1) {}
 
-    public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
-    }
+    public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {}
 
 }

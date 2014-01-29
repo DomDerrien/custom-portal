@@ -28,241 +28,248 @@ import dderrien.common.util.Range;
 
 public class AbstractServiceTest {
 
-	public class TestModel extends AbstractBase<TestModel> {
-		String test;
-		public String getTest() { return test; }
-		public void setTest(String test) { this.test = test; }
-	};
-	public class TestDao extends AbstractDao<TestModel> {};
+    public class TestModel extends AbstractBase<TestModel> {
+        String test;
 
-	@Test
-	public void testConstructor() {
-		new AbstractService<TestModel>(new TestDao()) {};
-	}
+        public String getTest() {
+            return test;
+        }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectSilent() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		List<TestModel> selection = new ArrayList<TestModel>();
-		when(dao.select(null, null, null)).thenReturn(selection);
-		
-		assertEquals(selection, service.selectSilent(null, null, null));
-		verify(dao, times(1)).select(null, null, null);
-		verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
+        public void setTest(String test) {
+            this.test = test;
+        }
+    };
 
-	@Test(expected = NoContentException.class)
-	public void testSelectWithoutContent() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		ArrayList<TestModel> selection = new ArrayList<TestModel>();
-		when(dao.select(null, null, null)).thenReturn(selection);
-		
-		service.select(null, null, null);
-	}
+    public class TestDao extends AbstractDao<TestModel> {};
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectWithContent() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		List<TestModel> selection = Arrays.asList(new TestModel[] { new TestModel() });
-		when(dao.select(null, null, null)).thenReturn(selection);
-		
-		assertEquals(selection, service.select(null, null, null));
-		verify(dao, times(1)).select(null, null, null);
-		verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
+    @Test
+    public void testConstructor() {
+        new AbstractService<TestModel>(new TestDao()) {};
+    }
 
-	@Test
-	public void testGetSilent() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		TestModel candidate = new TestModel();
-		when(dao.get(id)).thenReturn(candidate);
-		
-		assertEquals(candidate, service.getSilent(id));
-		verify(dao, times(1)).get(id);
-		verify(dao, times(1)).get(anyLong());
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectSilent() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 
-	@Test(expected = NotFoundException.class)
-	public void testGetWithoutContent() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		when(dao.get(id)).thenReturn(null);
-		
-		service.get(id, 0L);
-	}
+        List<TestModel> selection = new ArrayList<TestModel>();
+        when(dao.select(null, null, null)).thenReturn(selection);
 
-	@Test
-	public void testGetWithContent() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		TestModel candidate = new TestModel();
-		when(dao.get(id)).thenReturn(candidate);
-		
-		assertEquals(candidate, service.get(id, 0L));
-		verify(dao, times(1)).get(id);
-		verify(dao, times(1)).get(anyLong());
-	}
+        assertEquals(selection, service.selectSilent(null, null, null));
+        verify(dao, times(1)).select(null, null, null);
+        verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-	@Test(expected = NotModifiedException.class)
-	public void testGetNotChanged() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		Long version = 4567L;
-		TestModel candidate = new TestModel();
-		candidate.setVersion(version);
-		when(dao.get(id)).thenReturn(candidate);
-		
-		service.get(id, version);
-	}
+    @Test(expected = NoContentException.class)
+    public void testSelectWithoutContent() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 
-	@Test(expected = ConflictException.class)
-	public void testCreateWithConflict() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		TestModel candidate = new TestModel();
-		candidate.setId(id);
-		when(dao.get(id)).thenReturn(candidate);
-		
-		service.create(candidate);
-	}
+        ArrayList<TestModel> selection = new ArrayList<TestModel>();
+        when(dao.select(null, null, null)).thenReturn(selection);
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testCreateWithoutConflictI() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		TestModel candidate = new TestModel();
-		Key<AbstractBase<TestModel>> key = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(key);
-		
-		assertEquals(key, service.create(candidate));
-		verify(dao, times(0)).get(anyLong());
-		verify(dao, times(1)).save(candidate);
-		verify(dao, times(1)).save(any(TestModel.class));
-	}
+        service.select(null, null, null);
+    }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testCreateWithoutConflictII() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		TestModel candidate = new TestModel();
-		candidate.setId(id);
-		when(dao.get(id)).thenReturn(null);
-		Key<AbstractBase<TestModel>> key = mock(Key.class);
-		when(dao.save(candidate)).thenReturn(key);
-		
-		assertEquals(key, service.create(candidate));
-		verify(dao, times(1)).get(id);
-		verify(dao, times(1)).get(anyLong());
-		verify(dao, times(1)).save(candidate);
-		verify(dao, times(1)).save(any(TestModel.class));
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectWithContent() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
 
-	@Test(expected = ConflictException.class)
-	public void testUpdateWithWrongVersion() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		Long version = 4567L;
-		TestModel original = new TestModel();
-		original.setId(id);
-		original.setVersion(version + 1); // Stored version is older than the proposed version
-		when(dao.get(id)).thenReturn(original);
-		TestModel candidate = new TestModel();
-		candidate.setId(id);
-		candidate.setVersion(version);
-		
-		service.update(id, version, candidate);
-	}
+        List<TestModel> selection = Arrays.asList(new TestModel[] { new TestModel() });
+        when(dao.select(null, null, null)).thenReturn(selection);
 
-	@Test(expected = NotModifiedException.class)
-	public void testUpdateWithoutModification() {
-		TestDao dao = mock(TestDao.class);
-		when(dao.getModelClass()).thenReturn(TestModel.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		Long version = 4567L;
-		TestModel original = new TestModel();
-		original.setId(id);
-		original.setVersion(version);
-		TestModel candidate = new TestModel();
-		candidate.setId(id);
-		candidate.setVersion(version);
-		when(dao.get(id)).thenReturn(candidate);
-		
-		service.update(id, version, candidate);
-	}
+        assertEquals(selection, service.select(null, null, null));
+        verify(dao, times(1)).select(null, null, null);
+        verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateWithModification() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		Long version = 4567L;
-		TestModel original = new TestModel();
-		original.setId(id);
-		original.setVersion(version);
-		original.setTest("original");
-		TestModel candidate = new TestModel();
-		candidate.setId(id);
-		candidate.setTest("candidate");
-		Key<AbstractBase<TestModel>> key = mock(Key.class);
-		when(dao.save(original)).thenReturn(key);
-		when(key.getId()).thenReturn(id);
-		when(dao.get(id)).thenReturn(candidate);
-		
-		assertEquals(candidate, service.update(original, version, candidate));
-		verify(dao, times(1)).save(original);
-		verify(dao, times(1)).save(any(TestModel.class));
-		verify(key, times(1)).getId();
-		verify(dao, times(1)).get(id);
-		verify(dao, times(1)).get(anyLong());
-	}
-	
-	@Test
-	public void testDelete() {
-		TestDao dao = mock(TestDao.class);
-		AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
-		
-		Long id = 12345L;
-		when(dao.get(id)).thenReturn(new TestModel());
-		
-		service.delete(id, 0L);
-		verify(dao, times(1)).get(id);
-		verify(dao, times(1)).get(anyLong());
-		verify(dao, times(1)).delete(id);
-		verify(dao, times(1)).delete(anyLong());
-	}
+    @Test
+    public void testGetSilent() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        TestModel candidate = new TestModel();
+        when(dao.get(id)).thenReturn(candidate);
+
+        assertEquals(candidate, service.getSilent(id));
+        verify(dao, times(1)).get(id);
+        verify(dao, times(1)).get(anyLong());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void testGetWithoutContent() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        when(dao.get(id)).thenReturn(null);
+
+        service.get(id, 0L);
+    }
+
+    @Test
+    public void testGetWithContent() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        TestModel candidate = new TestModel();
+        when(dao.get(id)).thenReturn(candidate);
+
+        assertEquals(candidate, service.get(id, 0L));
+        verify(dao, times(1)).get(id);
+        verify(dao, times(1)).get(anyLong());
+    }
+
+    @Test(expected = NotModifiedException.class)
+    public void testGetNotChanged() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        Long version = 4567L;
+        TestModel candidate = new TestModel();
+        candidate.setVersion(version);
+        when(dao.get(id)).thenReturn(candidate);
+
+        service.get(id, version);
+    }
+
+    @Test(expected = ConflictException.class)
+    public void testCreateWithConflict() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        TestModel candidate = new TestModel();
+        candidate.setId(id);
+        when(dao.get(id)).thenReturn(candidate);
+
+        service.create(candidate);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testCreateWithoutConflictI() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        TestModel candidate = new TestModel();
+        Key<AbstractBase<TestModel>> key = mock(Key.class);
+        when(dao.save(candidate)).thenReturn(key);
+
+        assertEquals(key, service.create(candidate));
+        verify(dao, times(0)).get(anyLong());
+        verify(dao, times(1)).save(candidate);
+        verify(dao, times(1)).save(any(TestModel.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testCreateWithoutConflictII() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        TestModel candidate = new TestModel();
+        candidate.setId(id);
+        when(dao.get(id)).thenReturn(null);
+        Key<AbstractBase<TestModel>> key = mock(Key.class);
+        when(dao.save(candidate)).thenReturn(key);
+
+        assertEquals(key, service.create(candidate));
+        verify(dao, times(1)).get(id);
+        verify(dao, times(1)).get(anyLong());
+        verify(dao, times(1)).save(candidate);
+        verify(dao, times(1)).save(any(TestModel.class));
+    }
+
+    @Test(expected = ConflictException.class)
+    public void testUpdateWithWrongVersion() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        Long version = 4567L;
+        TestModel original = new TestModel();
+        original.setId(id);
+        original.setVersion(version + 1); // Stored version is older than the proposed version
+        when(dao.get(id)).thenReturn(original);
+        TestModel candidate = new TestModel();
+        candidate.setId(id);
+        candidate.setVersion(version);
+
+        service.update(id, version, candidate);
+    }
+
+    @Test(expected = NotModifiedException.class)
+    public void testUpdateWithoutModification() {
+        TestDao dao = mock(TestDao.class);
+        when(dao.getModelClass()).thenReturn(TestModel.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        Long version = 4567L;
+        TestModel original = new TestModel();
+        original.setId(id);
+        original.setVersion(version);
+        TestModel candidate = new TestModel();
+        candidate.setId(id);
+        candidate.setVersion(version);
+        when(dao.get(id)).thenReturn(candidate);
+
+        service.update(id, version, candidate);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateWithModification() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        Long version = 4567L;
+        TestModel original = new TestModel();
+        original.setId(id);
+        original.setVersion(version);
+        original.setTest("original");
+        TestModel candidate = new TestModel();
+        candidate.setId(id);
+        candidate.setTest("candidate");
+        Key<AbstractBase<TestModel>> key = mock(Key.class);
+        when(dao.save(original)).thenReturn(key);
+        when(key.getId()).thenReturn(id);
+        when(dao.get(id)).thenReturn(candidate);
+
+        assertEquals(candidate, service.update(original, version, candidate));
+        verify(dao, times(1)).save(original);
+        verify(dao, times(1)).save(any(TestModel.class));
+        verify(key, times(1)).getId();
+        verify(dao, times(1)).get(id);
+        verify(dao, times(1)).get(anyLong());
+    }
+
+    @Test
+    public void testDelete() {
+        TestDao dao = mock(TestDao.class);
+        AbstractService<TestModel> service = new AbstractService<TestModel>(dao) {};
+
+        Long id = 12345L;
+        when(dao.get(id)).thenReturn(new TestModel());
+
+        service.delete(id, 0L);
+        verify(dao, times(1)).get(id);
+        verify(dao, times(1)).get(anyLong());
+        verify(dao, times(1)).delete(id);
+        verify(dao, times(1)).delete(anyLong());
+    }
 }

@@ -11,7 +11,7 @@ public class CategoryDao extends AbstractDao<Category> {
     static {
         ObjectifyService.register(IntrospectionHelper.getFirstTypeArgument(CategoryDao.class));
     }
-    
+
     public CategoryDao() {
         super();
     }

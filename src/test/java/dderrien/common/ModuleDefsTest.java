@@ -15,17 +15,17 @@ import dderrien.common.service.UserService;
 
 public class ModuleDefsTest {
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testConfigure() {
-		Binder binder = mock(Binder.class);
-		new ModuleDefs().configure(binder);
-		
-		verify(binder, times(1)).bind(UserDao.class);
-		verify(binder, times(1)).bind(UserService.class);
-		verify(binder, times(1)).bind(UserResource.class);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testConfigure() {
+        Binder binder = mock(Binder.class);
+        new ModuleDefs().configure(binder);
 
-		verify(binder, times(3)).bind(any(Class.class));
-	}
+        verify(binder, times(1)).bind(UserDao.class);
+        verify(binder, times(1)).bind(UserService.class);
+        verify(binder, times(1)).bind(UserResource.class);
+
+        verify(binder, times(3)).bind(any(Class.class));
+    }
 
 }

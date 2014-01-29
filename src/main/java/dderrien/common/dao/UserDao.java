@@ -11,7 +11,7 @@ public class UserDao extends AbstractDao<User> {
         ObjectifyService.register(IntrospectionHelper.getFirstTypeArgument(UserDao.class));
     }
 
-    public UserDao () {
+    public UserDao() {
         super();
     }
 }

@@ -16,18 +16,23 @@ public class Category extends AbstractAuthBase<Category> {
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public String getWidth() {
         return width;
     }
+
     public void setWidth(String width) {
         this.width = width;
     }
+
     public Long getOrder() {
         return order;
     }
+
     public void setOrder(Long order) {
         this.order = order;
     }

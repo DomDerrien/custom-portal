@@ -130,6 +130,16 @@
 
     <build>
         <plugins>
+        	<!-- To format the Java code (HMTL/JS/CSS code being formatted with a Grunt task) -->
+         	<plugin>
+	        	<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+	        	<artifactId>maven-java-formatter-plugin</artifactId>
+	        	<version>0.4</version>
+	        	<configuration>
+	        		<configFile>${project.basedir}/dderrien-java-formatter.xml</configFile>
+	        	</configuration>
+        	</plugin>
+
         	<!-- To compile the code -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

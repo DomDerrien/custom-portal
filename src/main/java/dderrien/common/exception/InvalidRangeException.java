@@ -27,7 +27,7 @@ public class InvalidRangeException extends WebApplicationException {
 
     public InvalidRangeException(String message, Throwable cause) {
         super(message, cause, 416);
-        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName() + ", and cause message: "
-                + cause.getMessage());
+        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName()
+                + ", and cause message: " + cause.getMessage());
     }
 }

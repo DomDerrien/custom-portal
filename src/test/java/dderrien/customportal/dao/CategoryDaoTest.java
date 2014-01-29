@@ -4,8 +4,8 @@ import org.junit.Test;
 
 public class CategoryDaoTest {
 
-	@Test
-	public void testConstructor() {
-		new CategoryDao();
-	}
+    @Test
+    public void testConstructor() {
+        new CategoryDao();
+    }
 }

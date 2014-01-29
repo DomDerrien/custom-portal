@@ -20,9 +20,9 @@ public class UserService extends AbstractService<User> {
     public UserService(UserDao dao) {
         super(dao);
     }
-    
+
     public com.google.appengine.api.users.UserService getSystemUserService() {
-    	return UserServiceFactory.getUserService();
+        return UserServiceFactory.getUserService();
     }
 
     public User getLoggedUser() {
@@ -43,7 +43,7 @@ public class UserService extends AbstractService<User> {
 
         return users.get(0);
     }
-    
+
     public boolean isLoggedAdmin() {
         return getSystemUserService().isUserAdmin();
     }

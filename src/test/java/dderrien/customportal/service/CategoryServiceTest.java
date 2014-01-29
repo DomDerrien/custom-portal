@@ -31,282 +31,281 @@ import dderrien.customportal.model.Category;
 
 public class CategoryServiceTest {
 
-	@Test
-	public void testConstructor() {
-		new CategoryService(new CategoryDao(), new UserService(new UserDao()));
-	}
+    @Test
+    public void testConstructor() {
+        new CategoryService(new CategoryDao(), new UserService(new UserDao()));
+    }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectAll() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
-		final List<Category> selection = Arrays.asList(new Category[] { new Category() });
-		doAnswer(new Answer<List<Category>>() {
-			@Override
-			public List<Category> answer(InvocationOnMock invocation) throws Throwable {
-				List<String> orders = (List<String>) invocation.getArguments()[2];
-				assertEquals(1, orders.size());
-				assertEquals("+order", orders.get(0));
-				return selection;
-			}
-			
-		}).when(dao).select(anyMap(), any(Range.class), anyList());
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectAll() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
 
-		assertEquals(selection, service.select(null, null, null));
-		verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+        final List<Category> selection = Arrays.asList(new Category[] { new Category() });
+        doAnswer(new Answer<List<Category>>() {
+            @Override
+            public List<Category> answer(InvocationOnMock invocation) throws Throwable {
+                List<String> orders = (List<String>) invocation.getArguments()[2];
+                assertEquals(1, orders.size());
+                assertEquals("+order", orders.get(0));
+                return selection;
+            }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testSelectAllWithOrder() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
-		List<String> orders = new ArrayList<String>();
-		orders.add("-creation");
-		final List<Category> selection = Arrays.asList(new Category[] { new Category() });
-		doAnswer(new Answer<List<Category>>() {
-			@Override
-			public List<Category> answer(InvocationOnMock invocation) throws Throwable {
-				List<String> orders = (List<String>) invocation.getArguments()[2];
-				assertEquals(2, orders.size());
-				assertEquals("-creation", orders.get(0));
-				assertEquals("+order", orders.get(1));
-				return selection;
-			}
-			
-		}).when(dao).select(anyMap(), any(Range.class), anyList());
+        }).when(dao).select(anyMap(), any(Range.class), anyList());
 
-		assertEquals(selection, service.select(null, null, orders));
-		verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
-	}
+        assertEquals(selection, service.select(null, null, null));
+        verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateWithoutOrder() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
-		
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category existing = new Category();
-		existing.setId(id);
-		existing.setVersion(version);
-		existing.setTitle("existing");
-		Category entity = new Category();
-		entity.setId(id);
-		entity.setTitle("update");
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(existing)).thenReturn(key);
-		when(key.getId()).thenReturn(id);
-		when(dao.get(id)).thenReturn(entity);
-		
-		assertEquals(entity, service.update(existing, version, entity));
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectAllWithOrder() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateOrderNotChanged() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
-		
-		Long id = 12345L;
-		final Long version = 4567L;
-		Long order = 1L; // Second position
-		Category existing = new Category();
-		existing.setId(id);
-		existing.setVersion(version);
-		existing.setTitle("existing");
-		existing.setOrder(order);
-		Category entity = new Category();
-		entity.setId(id);
-		entity.setTitle("update");
-		entity.setOrder(order);
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(existing)).thenReturn(key);
-		when(key.getId()).thenReturn(id);
-		when(dao.get(id)).thenReturn(entity);
-		
-		assertEquals(entity, service.update(existing, version, entity));
-	}
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+        List<String> orders = new ArrayList<String>();
+        orders.add("-creation");
+        final List<Category> selection = Arrays.asList(new Category[] { new Category() });
+        doAnswer(new Answer<List<Category>>() {
+            @Override
+            public List<Category> answer(InvocationOnMock invocation) throws Throwable {
+                List<String> orders = (List<String>) invocation.getArguments()[2];
+                assertEquals(2, orders.size());
+                assertEquals("-creation", orders.get(0));
+                assertEquals("+order", orders.get(1));
+                return selection;
+            }
 
-	private static Category createCandidate(Long id, Long version, Long order) {
-		Category out = new Category();
-		out.setId(id);
-		out.setVersion(version);
-		out.setOrder(order);
-		return out;
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateOrderMoveFrontToBack() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+        }).when(dao).select(anyMap(), any(Range.class), anyList());
 
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category existing = createCandidate(id, version, null);
-		Category _1 = createCandidate(1L, version, 1L);
-		Category _2 = createCandidate(2L, version, 2L);
-		List<Category> selection = Arrays.asList(new Category[] { existing, _1, _2 });
-		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+        assertEquals(selection, service.select(null, null, orders));
+        verify(dao, times(1)).select(anyMap(), any(Range.class), anyList());
+    }
 
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(any(Category.class))).thenReturn(key);
-		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateWithoutOrder() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
 
-		Category update = createCandidate(id, version, 2L);
-		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, version, update));
-		verify(dao, times(3)).get(anyLong());
-		verify(dao, times(1)).save(_1);
-		verify(dao, times(1)).save(_2);
-		verify(dao, times(1)).save(existing);
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateOrderPushBack() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category _0 = createCandidate(0L, version, 0L);
-		Category existing = createCandidate(id, version, 1L);
-		Category _2 = createCandidate(2L, version, 2L);
-		Category _3 = createCandidate(3L, version, 3L);
-		Category _4 = createCandidate(4L, version, 4L);
-		List<Category> selection = Arrays.asList(new Category[] { _0, existing, _2, _3, _4 });
-		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category existing = new Category();
+        existing.setId(id);
+        existing.setVersion(version);
+        existing.setTitle("existing");
+        Category entity = new Category();
+        entity.setId(id);
+        entity.setTitle("update");
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(existing)).thenReturn(key);
+        when(key.getId()).thenReturn(id);
+        when(dao.get(id)).thenReturn(entity);
 
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(any(Category.class))).thenReturn(key);
-		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+        assertEquals(entity, service.update(existing, version, entity));
+    }
 
-		Category update = createCandidate(id, version, 3L);
-		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, version, update));
-		verify(dao, times(3)).get(anyLong());
-		verify(dao, times(0)).save(_0);
-		verify(dao, times(1)).save(_2);
-		verify(dao, times(1)).save(_3);
-		verify(dao, times(0)).save(_4);
-		verify(dao, times(1)).save(existing);
-	}
-	
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateOrderMoveBackToFront() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateOrderNotChanged() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
 
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category _0 = createCandidate(0L, version, 0L);
-		Category _1 = createCandidate(1L, version, 1L);
-		Category existing = createCandidate(id, version, 2L);
-		List<Category> selection = Arrays.asList(new Category[] { _0, _1, existing });
-		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(any(Category.class))).thenReturn(key);
-		when(key.getId()).thenReturn(0L).thenReturn(1L).thenReturn(id);
+        Long id = 12345L;
+        final Long version = 4567L;
+        Long order = 1L; // Second position
+        Category existing = new Category();
+        existing.setId(id);
+        existing.setVersion(version);
+        existing.setTitle("existing");
+        existing.setOrder(order);
+        Category entity = new Category();
+        entity.setId(id);
+        entity.setTitle("update");
+        entity.setOrder(order);
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(existing)).thenReturn(key);
+        when(key.getId()).thenReturn(id);
+        when(dao.get(id)).thenReturn(entity);
 
-		Category update = createCandidate(id, version, 0L);
-		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, version, update));
-		verify(dao, times(3)).get(anyLong());
-		verify(dao, times(1)).save(_0);
-		verify(dao, times(1)).save(_1);
-		verify(dao, times(1)).save(existing);
-	}
-	
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testUpdateOrderGetBack() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+        assertEquals(entity, service.update(existing, version, entity));
+    }
 
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category _null = createCandidate(-1L, version, null);
-		Category _0 = createCandidate(0L, version, 0L);
-		Category _1 = createCandidate(1L, version, 1L);
-		Category _2 = createCandidate(2L, version, 2L);
-		Category existing = createCandidate(id, version, 3L);
-		Category _4 = createCandidate(4L, version, 4L);
-		List<Category> selection = Arrays.asList(new Category[] { _null, _0, _1, _2, existing, _4 });
-		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+    private static Category createCandidate(Long id, Long version, Long order) {
+        Category out = new Category();
+        out.setId(id);
+        out.setVersion(version);
+        out.setOrder(order);
+        return out;
+    }
 
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(any(Category.class))).thenReturn(key);
-		when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateOrderMoveFrontToBack() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
 
-		Category update = createCandidate(id, version, 1L);
-		when(dao.get(id)).thenReturn(update);
-		assertEquals(update, service.update(existing, version, update));
-		verify(dao, times(3)).get(anyLong());
-		verify(dao, times(0)).save(_0);
-		verify(dao, times(1)).save(_1);
-		verify(dao, times(1)).save(_2);
-		verify(dao, times(0)).save(_4);
-		verify(dao, times(1)).save(existing);
-	}
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
 
-	@Test(expected = ServerErrorException.class)
-	@SuppressWarnings("unchecked")
-	public void testUpdatewithNonCloneable() {
-		CategoryDao dao = mock(CategoryDao.class);
-		UserService userService = mock(UserService.class);
-		CategoryService service = new CategoryService(dao, userService);
-		
-		when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
-		
-		Long id = 12345L;
-		final Long version = 4567L;
-		Category existing = createCandidate(id, version, 1L);
-		Category update = createCandidate(id, version, 0L);
-		Category nonCloneable = new Category() {
-			@Override
-			public Category clone() throws CloneNotSupportedException {
-				throw new CloneNotSupportedException("Done in purpose");
-			}
-		};
-		nonCloneable.setId(1L);
-		nonCloneable.setOrder(0L);
-		List<Category> selection = Arrays.asList(new Category[] { nonCloneable, existing });
-		when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category existing = createCandidate(id, version, null);
+        Category _1 = createCandidate(1L, version, 1L);
+        Category _2 = createCandidate(2L, version, 2L);
+        List<Category> selection = Arrays.asList(new Category[] { existing, _1, _2 });
+        when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
 
-		Key<AbstractBase<Category>> key = mock(Key.class);
-		when(dao.save(existing)).thenReturn(key);
-		
-		service.update(existing, version, update);
-	}
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(any(Category.class))).thenReturn(key);
+        when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+
+        Category update = createCandidate(id, version, 2L);
+        when(dao.get(id)).thenReturn(update);
+        assertEquals(update, service.update(existing, version, update));
+        verify(dao, times(3)).get(anyLong());
+        verify(dao, times(1)).save(_1);
+        verify(dao, times(1)).save(_2);
+        verify(dao, times(1)).save(existing);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateOrderPushBack() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
+
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category _0 = createCandidate(0L, version, 0L);
+        Category existing = createCandidate(id, version, 1L);
+        Category _2 = createCandidate(2L, version, 2L);
+        Category _3 = createCandidate(3L, version, 3L);
+        Category _4 = createCandidate(4L, version, 4L);
+        List<Category> selection = Arrays.asList(new Category[] { _0, existing, _2, _3, _4 });
+        when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(any(Category.class))).thenReturn(key);
+        when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+
+        Category update = createCandidate(id, version, 3L);
+        when(dao.get(id)).thenReturn(update);
+        assertEquals(update, service.update(existing, version, update));
+        verify(dao, times(3)).get(anyLong());
+        verify(dao, times(0)).save(_0);
+        verify(dao, times(1)).save(_2);
+        verify(dao, times(1)).save(_3);
+        verify(dao, times(0)).save(_4);
+        verify(dao, times(1)).save(existing);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateOrderMoveBackToFront() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
+
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category _0 = createCandidate(0L, version, 0L);
+        Category _1 = createCandidate(1L, version, 1L);
+        Category existing = createCandidate(id, version, 2L);
+        List<Category> selection = Arrays.asList(new Category[] { _0, _1, existing });
+        when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(any(Category.class))).thenReturn(key);
+        when(key.getId()).thenReturn(0L).thenReturn(1L).thenReturn(id);
+
+        Category update = createCandidate(id, version, 0L);
+        when(dao.get(id)).thenReturn(update);
+        assertEquals(update, service.update(existing, version, update));
+        verify(dao, times(3)).get(anyLong());
+        verify(dao, times(1)).save(_0);
+        verify(dao, times(1)).save(_1);
+        verify(dao, times(1)).save(existing);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateOrderGetBack() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
+
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category _null = createCandidate(-1L, version, null);
+        Category _0 = createCandidate(0L, version, 0L);
+        Category _1 = createCandidate(1L, version, 1L);
+        Category _2 = createCandidate(2L, version, 2L);
+        Category existing = createCandidate(id, version, 3L);
+        Category _4 = createCandidate(4L, version, 4L);
+        List<Category> selection = Arrays.asList(new Category[] { _null, _0, _1, _2, existing, _4 });
+        when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(any(Category.class))).thenReturn(key);
+        when(key.getId()).thenReturn(1L).thenReturn(2L).thenReturn(id);
+
+        Category update = createCandidate(id, version, 1L);
+        when(dao.get(id)).thenReturn(update);
+        assertEquals(update, service.update(existing, version, update));
+        verify(dao, times(3)).get(anyLong());
+        verify(dao, times(0)).save(_0);
+        verify(dao, times(1)).save(_1);
+        verify(dao, times(1)).save(_2);
+        verify(dao, times(0)).save(_4);
+        verify(dao, times(1)).save(existing);
+    }
+
+    @Test(expected = ServerErrorException.class)
+    @SuppressWarnings("unchecked")
+    public void testUpdatewithNonCloneable() {
+        CategoryDao dao = mock(CategoryDao.class);
+        UserService userService = mock(UserService.class);
+        CategoryService service = new CategoryService(dao, userService);
+
+        when(userService.isLoggedAdmin()).thenReturn(Boolean.TRUE);
+
+        Long id = 12345L;
+        final Long version = 4567L;
+        Category existing = createCandidate(id, version, 1L);
+        Category update = createCandidate(id, version, 0L);
+        Category nonCloneable = new Category() {
+            @Override
+            public Category clone() throws CloneNotSupportedException {
+                throw new CloneNotSupportedException("Done in purpose");
+            }
+        };
+        nonCloneable.setId(1L);
+        nonCloneable.setOrder(0L);
+        List<Category> selection = Arrays.asList(new Category[] { nonCloneable, existing });
+        when(dao.select(anyMap(), any(Range.class), anyList())).thenReturn(selection);
+
+        Key<AbstractBase<Category>> key = mock(Key.class);
+        when(dao.save(existing)).thenReturn(key);
+
+        service.update(existing, version, update);
+    }
 }

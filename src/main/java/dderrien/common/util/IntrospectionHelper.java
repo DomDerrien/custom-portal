@@ -10,7 +10,7 @@ public class IntrospectionHelper {
     }
 
     public static Class<?> getTypeArgument(Class<?> clazz, int i) {
-    	// Get the generic definition from the super class
+        // Get the generic definition from the super class
         if (clazz.getGenericSuperclass() != null && ParameterizedType.class.isAssignableFrom(clazz.getGenericSuperclass().getClass())) {
             Type[] actualTypeArguments = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
             // Return the generic class that match the given index

@@ -24,15 +24,16 @@ import dderrien.common.service.UserService;
 public class ConsoleResource {
 
     private UserService userService;
-    
+
     @Inject
     public ConsoleResource(UserService userService) {
         this.userService = userService;
     }
-    
+
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Response prepareConsole(@Context HttpServletRequest request, @Context HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
+    public Response prepareConsole(@Context HttpServletRequest request, @Context HttpServletResponse response) throws ServletException, IOException,
+            URISyntaxException {
         String thisURL = request.getRequestURI();
         Principal principal = request.getUserPrincipal();
 
@@ -40,13 +41,13 @@ public class ConsoleResource {
         if (principal == null) {
             return Response.temporaryRedirect(new URI(getLoginURL(thisURL))).build();
         }
-        
+
         // Getting the parameters and forwarding them to the JSP
         User user = null;
         try {
             user = userService.getLoggedUser();
         }
-        catch(NotFoundException ex) {
+        catch (NotFoundException ex) {
             com.google.appengine.api.users.User systemUser = userService.getSystemUserService().getCurrentUser();
             user = new User();
             user.setName(systemUser.getNickname());
@@ -61,13 +62,13 @@ public class ConsoleResource {
             request.setAttribute("users", userService.select(null, null, null));
         }
         request.getRequestDispatcher("/WEB-INF/templates/console.jsp").forward(request, response);
-        return null; // TODO: Find a way to use the JAX-RS objects to forward the request,  with parameters, to the JSP
+        return null; // TODO: Find a way to use the JAX-RS objects to forward the request, with parameters, to the JSP
     }
-    
+
     protected String getLoginURL(String thisURL) {
         return userService.getSystemUserService().createLoginURL(thisURL);
     }
-    
+
     protected String getLogoutURL(String thisURL) {
         return userService.getSystemUserService().createLogoutURL(thisURL);
     }

@@ -12,7 +12,7 @@ public class LinkDao extends AbstractDao<Link> {
         ObjectifyService.register(IntrospectionHelper.getFirstTypeArgument(LinkDao.class));
     }
 
-    public LinkDao () {
+    public LinkDao() {
         super();
     }
 }

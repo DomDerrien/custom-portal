@@ -20,7 +20,7 @@ public class UnauthorizedException extends javax.ws.rs.NotAuthorizedException {
 
     public UnauthorizedException(String message, Throwable cause) {
         super(message, cause);
-        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName() + ", and cause message: "
-                + cause.getMessage());
+        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName()
+                + ", and cause message: " + cause.getMessage());
     }
 }

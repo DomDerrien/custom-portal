@@ -38,7 +38,7 @@ public class UserResource {
     public UserResource(UserService service) {
         this.service = service;
     }
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> select(@QueryParam("name") String name) {
@@ -62,7 +62,7 @@ public class UserResource {
     public User getVersioned(@PathParam("id") Long id, @PathParam("version") long version) {
         return service.get(id, version);
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
@@ -70,7 +70,7 @@ public class UserResource {
         Key<AbstractBase<User>> key = service.create(entity);
         return Response.status(201).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

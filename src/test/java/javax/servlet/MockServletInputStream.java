@@ -13,6 +13,7 @@ public class MockServletInputStream extends ServletInputStream {
     public MockServletInputStream() {
         setData("");
     }
+
     /** Constructor with the initial stream content */
     public MockServletInputStream(String data) {
         setData(data);
@@ -26,9 +27,9 @@ public class MockServletInputStream extends ServletInputStream {
 
     @Override
     public int read() throws IOException {
-        if(cursor < limit) {
+        if (cursor < limit) {
             char c = stream.charAt(cursor);
-            ++ cursor;
+            ++cursor;
             return (int) c;
         }
         return -1;
@@ -38,10 +39,12 @@ public class MockServletInputStream extends ServletInputStream {
     public String getContents() {
         return stream.toString();
     }
+
     /** Return the yet processed stream content */
     public String getProcessedContents() {
         return stream.substring(0, cursor - 1);
     }
+
     /** Return the non yet processed stream content */
     public String getNotProcessedContents() {
         return stream.substring(cursor);

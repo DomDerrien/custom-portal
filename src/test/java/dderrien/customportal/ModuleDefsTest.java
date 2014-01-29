@@ -19,22 +19,22 @@ import dderrien.customportal.service.LinkService;
 
 public class ModuleDefsTest {
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testConfigure() {
-		Binder binder = mock(Binder.class);
-		new ModuleDefs().configure(binder);
-		
-		verify(binder, times(1)).bind(CategoryDao.class);
-		verify(binder, times(1)).bind(CategoryService.class);
-		verify(binder, times(1)).bind(CategoryResource.class);
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testConfigure() {
+        Binder binder = mock(Binder.class);
+        new ModuleDefs().configure(binder);
 
-		verify(binder, times(1)).bind(LinkDao.class);
-		verify(binder, times(1)).bind(LinkService.class);
-		verify(binder, times(1)).bind(LinkResource.class);
+        verify(binder, times(1)).bind(CategoryDao.class);
+        verify(binder, times(1)).bind(CategoryService.class);
+        verify(binder, times(1)).bind(CategoryResource.class);
 
-		verify(binder, times(1)).bind(ConsoleResource.class);
+        verify(binder, times(1)).bind(LinkDao.class);
+        verify(binder, times(1)).bind(LinkService.class);
+        verify(binder, times(1)).bind(LinkResource.class);
 
-		verify(binder, times(7)).bind(any(Class.class));
-	}
+        verify(binder, times(1)).bind(ConsoleResource.class);
+
+        verify(binder, times(7)).bind(any(Class.class));
+    }
 }

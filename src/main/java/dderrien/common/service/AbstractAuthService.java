@@ -15,15 +15,15 @@ import dderrien.common.model.AbstractBase;
 import dderrien.common.util.Range;
 
 public class AbstractAuthService<T extends AbstractAuthBase<T>> extends AbstractService<T> {
-    
+
     private UserService userService;
-    
+
     @Inject
     public AbstractAuthService(AbstractDao<T> dao, UserService userService) {
         super(dao);
         this.userService = userService;
     }
-    
+
     @Override
     public List<T> select(Map<String, Object> filters, Range range, List<String> orders) {
         if (!userService.isLoggedAdmin()) {
@@ -38,9 +38,9 @@ public class AbstractAuthService<T extends AbstractAuthBase<T>> extends Abstract
             }
             filters.put("ownerId", userService.getLoggedUser().getId());
         }
-		return super.select(filters, range, orders);
+        return super.select(filters, range, orders);
     }
-    
+
     @Override
     public T get(Long id, Long version, boolean throwConflictIfVersionDontMatch) {
         T entity = super.get(id, version, throwConflictIfVersionDontMatch);
@@ -50,7 +50,7 @@ public class AbstractAuthService<T extends AbstractAuthBase<T>> extends Abstract
             }
         }
         return entity;
-    }    
+    }
 
     @Override
     public Key<AbstractBase<T>> create(T entity) {
@@ -60,13 +60,14 @@ public class AbstractAuthService<T extends AbstractAuthBase<T>> extends Abstract
             }
         }
         return super.create(entity);
-    }    
+    }
 
     @Override
     public T update(T existing, Long version, T entity) {
         if (!userService.isLoggedAdmin()) {
             if (!userService.getLoggedUser().getId().equals(entity.getOwnerId())) {
-            	// Only the ownerId of the existing entity is checked, as the field is marked WriteOnceField and updates are ignored
+                // Only the ownerId of the existing entity is checked, as the field is marked WriteOnceField and updates
+                // are ignored
                 throw new UnauthorizedException(dao.getModelClass().getName() + " entity needs to belong to the logged user");
             }
         }

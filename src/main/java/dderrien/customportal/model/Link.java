@@ -11,25 +11,30 @@ import dderrien.common.model.AbstractAuthBase;
 @Cache
 @Index
 public class Link extends AbstractAuthBase<Link> {
-	Long categoryId;
-	@Unindex String title;
-	@Unindex String href;
+    Long categoryId;
+    @Unindex String title;
+    @Unindex String href;
 
-	public Long getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
+
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public String getHRef() {
         return href;
     }
+
     public void setHRef(String href) {
         this.href = href;
     }

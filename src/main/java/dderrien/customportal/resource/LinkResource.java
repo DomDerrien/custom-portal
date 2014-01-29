@@ -31,12 +31,12 @@ import dderrien.customportal.service.LinkService;
 public class LinkResource {
 
     private LinkService service;
-    
+
     @Inject
     public LinkResource(LinkService service) {
         this.service = service;
     }
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Link> select(@QueryParam("ownerId") Long ownerId, @QueryParam("categoryId") Long categoryId) {
@@ -63,7 +63,7 @@ public class LinkResource {
     public Link getVersioned(@PathParam("id") Long id, @PathParam("version") Long version) {
         return service.get(id, version);
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
@@ -71,7 +71,7 @@ public class LinkResource {
         Key<AbstractBase<Link>> key = service.create(entity);
         return Response.status(201).location(new URI(uriInfo.getPath() + key.getId())).build();
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

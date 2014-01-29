@@ -45,7 +45,7 @@ public abstract class AbstractBase<T> implements Cloneable {
     public void setCreation(Date creation) {
         this.creation = creation;
     }
-    
+
     @WriteOnceField
     public Long getVersion() {
         return version;
@@ -87,25 +87,26 @@ public abstract class AbstractBase<T> implements Cloneable {
                 else if (propertyValue instanceof Double) {
                     out.append((Double) propertyValue);
                 }
-                else  {
+                else {
                     out.append("\"").append(propertyValue).append("\"");
                 }
                 out.append(", ");
             }
         }
         catch (Exception ex) {
-            out.append("\"ex\": \"").append(ex.getClass().getSimpleName()).append(" in ").append(getClass().getSimpleName()).append(".toString()").append("\", ");
+            out.append("\"ex\": \"").append(ex.getClass().getSimpleName()).append(" in ").append(getClass().getSimpleName()).append(".toString()")
+                    .append("\", ");
         }
         int lastSeparator = out.lastIndexOf(", ");
         if (lastSeparator != -1) {
-        	out.replace(lastSeparator, lastSeparator + ", ".length(), "");
+            out.replace(lastSeparator, lastSeparator + ", ".length(), "");
         }
         return out.append(" }").toString();
     }
-    
+
     @Override
     @SuppressWarnings({ "unchecked" })
-    public T clone() throws CloneNotSupportedException{
+    public T clone() throws CloneNotSupportedException {
         return (T) super.clone();
     }
 
@@ -157,6 +158,6 @@ public abstract class AbstractBase<T> implements Cloneable {
             creation = new DateTime().toDate();
             version = Long.valueOf(0l);
         }
-        version ++;
+        version++;
     }
 }

@@ -13,7 +13,7 @@ import dderrien.customportal.service.LinkService;
 
 public class ModuleDefs implements Module {
 
-	public void configure(final Binder binder) {
+    public void configure(final Binder binder) {
         binder.bind(ConsoleResource.class);
 
         binder.bind(CategoryResource.class);
@@ -24,5 +24,5 @@ public class ModuleDefs implements Module {
 
         binder.bind(CategoryDao.class);
         binder.bind(LinkDao.class);
-	}
+    }
 }

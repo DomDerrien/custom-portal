@@ -28,7 +28,7 @@ public class NotModifiedException extends WebApplicationException {
 
     public NotModifiedException(String message, Throwable cause) {
         super(message, cause, Status.NOT_MODIFIED);
-        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName() + ", and cause message: "
-                + cause.getMessage());
+        logger.finest("Exception: " + getClass().getName() + " with message: " + message + ", with cause: " + cause.getClass().getName()
+                + ", and cause message: " + cause.getMessage());
     }
 }
