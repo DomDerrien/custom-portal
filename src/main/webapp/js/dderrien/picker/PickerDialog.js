@@ -2,6 +2,7 @@ define(
     [
         'dojo',
         'dojo/text!./templates/PickerDialog.html',
+        'dojo/on',
         'dijit/_Widget',
         'dijit/_TemplatedMixin',
         'dijit/_WidgetsInTemplateMixin',
@@ -24,7 +25,7 @@ define(
         'dijit/layout/BorderContainer',
         'dijit/layout/ContentPane'
     ],
-    function(dojo, template, _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, on, Cache, JsonRest, Memory, Observable, List, Grid, Tree, Selection, Keyboard) {
+    function(dojo, template, on, _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, on, Cache, JsonRest, Memory, Observable, List, Grid, Tree, Selection, Keyboard) {
         // module:
         //   dderrien/picker
         // summary:
@@ -60,9 +61,11 @@ define(
                 postCreate: function() {
                     this.inherited(arguments);
 
-                    this.searchButtonNode.set('onClick', dojo.hitch(this, '_search'));
-                    this.cancelButtonNode.set('onClick', dojo.hitch(this.dialogNode, 'hide'));
-                    this.okButtonNode.set('onClick', dojo.hitch(this, '_pickIt'));
+                    this.own(
+                        on(this.searchButtonNode, 'click', dojo.hitch(this, '_search')),
+                        on(this.cancelButtonNode, 'click', dojo.hitch(this.dialogNode, 'hide')),
+                        on(this.okButtonNode, 'click', dojo.hitch(this, '_pickIt'))
+                    );
 
                     this.listHeaderNode.innerHTML = dojo.string.substitute('List size: ${0}', [0]);
                 },
@@ -104,7 +107,8 @@ define(
                         );
                         this.listGridNode.on('.dgrid-row:click', dojo.hitch(this, '_handleEntityHighlighted'));
                         this.listGridNode.on('.dgrid-row:dblclick', dojo.hitch(this, '_handleEntitySelected'));
-                    } else {
+                    }
+                    else {
                         this.listGridNode.set('query', params);
                     }
                 },

@@ -2,6 +2,7 @@ define(
     [
         'dojo',
         'dojo/text!./templates/PickerBox.html',
+        'dojo/on',
         'dijit/_Widget',
         'dijit/_TemplatedMixin',
         'dijit/_WidgetsInTemplateMixin',
@@ -9,7 +10,7 @@ define(
         'dijit/form/Button',
         'dijit/form/TextBox'
     ],
-    function(dojo, template, _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, PickerDialog) {
+    function(dojo, template, on, _Widget, _TemplatedMixin, _WidgetsInTemplateMixin, PickerDialog) {
         // module:
         //   dderrien/picker
         // summary:
@@ -48,7 +49,8 @@ define(
                 postCreate: function() {
                     this.inherited(arguments);
 
-                    var title = this.category.charAt(0).toUpperCase() + this.category.substring(1) + ' Selector';
+                    var categpryName = this.category,
+                        title = categpryName.charAt(0).toUpperCase() + categpryName.substring(1) + ' Selector';
 
                     this._pickerDialog = new PickerDialog(dojo.mixin({
                         parent: this,
@@ -56,7 +58,11 @@ define(
                         title: title,
                         store: this.store
                     }, this.dialogProps));
-                    this.pickItButtonNode.set('onClick', dojo.hitch(this._pickerDialog, 'show'));
+
+                    this.own(
+                        on(this.pickItButtonNode, 'click', dojo.hitch(this._pickerDialog, 'show'))
+                    );
+
                     if (this.required) {
                         this.vValueNode.set('required', true);
                     }
