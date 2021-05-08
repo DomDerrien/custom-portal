@@ -1,12 +1,12 @@
 {
   "devDependencies": {
-    "grunt": "0.4.2",
-    "grunt-cli": "*",
-    "grunt-jsbeautifier": "*",
-    "jshint": "2.3.0",
-    "grunt-contrib-jshint": "0.7.2",
-    "stylus": "0.41.2",
-    "grunt-contrib-stylus": "0.11",
-    "intern": "1.3.2"
+    "grunt": "latest",
+    "grunt-cli": "latest",
+    "grunt-jsbeautifier": "latest",
+    "jshint": "latest",
+    "grunt-contrib-jshint": "latest",
+    "stylus": "latest",
+    "grunt-contrib-stylus": "latest",
+    "intern": "latest"
   }
 }
